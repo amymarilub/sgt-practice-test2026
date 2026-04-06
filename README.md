@@ -6,6 +6,7 @@ A single-file web app for studying the SAPD SGT promotional exam. No installs, n
 
 ## What's Covered
 
+
 The quiz mirrors the actual exam breakdown across all four sections:
 
 | Section | Questions | Topics |
