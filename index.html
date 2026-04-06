@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SAPD SGT Exam Practice</title>
+<style>
+  :root {
+    --bg:#0d1117; --bg2:#161b22; --bg3:#1c2128; --bg4:#21262d;
+    --border:#30363d; --border2:#444c56;
+    --navy:#4a9eff; --navy-bg:#0d1f3c; --navy-dim:#1c3557;
+    --green:#3fb950; --green-bg:#0d2818; --green-dim:#1c4228;
+    --red:#f85149; --red-bg:#2d1218; --red-dim:#4d1f22;
+    --gold:#d29922; --gold-bg:#2d2200; --gold-dim:#3d3000;
+    --brown:#e3b341; --brown-bg:#2d2000;
+    --cba:#ff7b72; --cba-bg:#2d1210;
+    --text:#e6edf3; --text2:#8b949e; --text3:#6e7681;
+    --radius:12px;
+    --shadow:0 4px 20px rgba(0,0,0,.4);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+  /* ── HEADER ── */
+  .header{background:var(--bg2);border-bottom:1px solid var(--border);color:var(--text);padding:14px 20px;display:flex;align-items:center;gap:12px}
+  .header-badge{background:var(--gold-bg);color:var(--gold);border:1px solid var(--gold-dim);font-weight:800;font-size:11px;padding:4px 10px;border-radius:20px;letter-spacing:.5px}
+  .header h1{font-size:17px;font-weight:700;flex:1;color:var(--text)}
+  .header-sub{font-size:11px;color:var(--text2);line-height:1.3}
+
+  /* ── SCREENS ── */
+  .screen{display:none;animation:fadeIn .2s ease}
+  .screen.active{display:block}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .container{max-width:680px;margin:0 auto;padding:16px}
+
+  /* ── HOME ── */
+  .home-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:22px;margin-bottom:14px}
+  .home-card h2{font-size:15px;color:var(--navy);margin-bottom:4px;font-weight:700}
+  .home-card p{font-size:13px;color:var(--text2);margin-bottom:16px;line-height:1.5}
+  .date-badge{background:var(--gold-bg);border:1px solid var(--gold-dim);color:var(--gold);font-size:12px;font-weight:700;padding:6px 14px;border-radius:20px;display:inline-block;margin-bottom:14px}
+
+  /* ── SECTION SELECTOR ── */
+  .section-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
+  .section-btn{border:1px solid var(--border);background:var(--bg3);border-radius:10px;padding:12px;cursor:pointer;text-align:left;transition:.2s}
+  .section-btn.selected{border-color:var(--navy);background:var(--navy-bg)}
+  .section-btn.selected .sb-label,.section-btn.selected .sb-count{color:var(--navy)}
+  .sb-dot{width:8px;height:8px;border-radius:50%;margin-bottom:6px}
+  .sb-label{font-size:12px;font-weight:700;color:var(--text);display:block}
+  .sb-count{font-size:11px;color:var(--text3)}
+
+  /* ── BUTTONS ── */
+  .btn{display:block;width:100%;padding:13px;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;transition:.2s;text-align:center}
+  .btn-primary{background:var(--navy);color:#0d1117}
+  .btn-primary:hover{filter:brightness(1.1)}
+  .btn-secondary{background:var(--bg3);color:var(--text);border:1px solid var(--border2)}
+  .btn-secondary:hover{background:var(--bg4)}
+  .btn-sm{padding:7px 14px;font-size:12px;width:auto;display:inline-block}
+  .btn-danger{background:var(--red);color:#0d1117}
+  .btn:disabled{opacity:.4;cursor:not-allowed}
+
+  /* ── SESSION LEN ── */
+  .len-group{display:flex;gap:8px;flex-wrap:wrap}
+  .len-btn{padding:7px 16px;font-size:12px;border-radius:8px;border:1px solid var(--border2);background:var(--bg3);color:var(--text2);cursor:pointer;font-weight:600;transition:.2s}
+  .len-btn.active{background:var(--navy-bg);border-color:var(--navy);color:var(--navy)}
+
+  /* ── PROGRESS BAR ── */
+  .prog-wrap{background:var(--bg4);border-radius:20px;height:6px;overflow:hidden;margin-bottom:8px}
+  .prog-fill{height:100%;border-radius:20px;background:linear-gradient(90deg,var(--navy),#79c0ff);transition:width .4s ease}
+
+  /* ── QUIZ ── */
+  .quiz-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+  .quiz-meta span{font-size:12px;color:var(--text2);font-weight:600}
+  .section-pill{font-size:10px;font-weight:800;padding:3px 9px;border-radius:20px;letter-spacing:.3px}
+  .pill-gm{background:var(--navy-bg);color:var(--navy);border:1px solid var(--navy-dim)}
+  .pill-pc{background:var(--green-bg);color:var(--green);border:1px solid var(--green-dim)}
+  .pill-tb{background:var(--brown-bg);color:var(--brown);border:1px solid #5a4000}
+  .pill-cba{background:var(--cba-bg);color:var(--cba);border:1px solid #5a2020}
+
+  .question-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:12px}
+  .q-number{font-size:11px;font-weight:600;color:var(--text2);margin-bottom:8px;letter-spacing:.2px}
+  .q-text{font-size:15px;font-weight:600;line-height:1.55;color:var(--text)}
+
+  .choices{display:flex;flex-direction:column;gap:8px}
+  .choice-btn{background:var(--bg2);border:1px solid var(--border2);border-radius:10px;padding:13px 15px;cursor:pointer;text-align:left;font-size:13.5px;color:var(--text);transition:.2s;display:flex;align-items:flex-start;gap:10px;line-height:1.4}
+  .choice-btn:hover:not(:disabled){border-color:var(--navy);background:var(--navy-bg)}
+  .choice-letter{font-weight:800;color:var(--navy);min-width:16px;font-size:14px;margin-top:1px}
+  .choice-btn.correct{border-color:var(--green);background:var(--green-bg)}
+  .choice-btn.correct .choice-letter{color:var(--green)}
+  .choice-btn.wrong{border-color:var(--red);background:var(--red-bg)}
+  .choice-btn.wrong .choice-letter{color:var(--red)}
+  .choice-btn.reveal{border-color:var(--green);background:var(--green-bg)}
+  .choice-btn.reveal .choice-letter{color:var(--green)}
+  .choice-btn:disabled{cursor:default}
+
+  /* ── FEEDBACK ── */
+  .feedback{border-radius:10px;padding:13px 15px;margin-top:10px;font-size:13px;display:none}
+  .feedback.show{display:block}
+  .feedback.correct{background:var(--green-bg);border:1px solid var(--green-dim);color:var(--green)}
+  .feedback.wrong{background:var(--red-bg);border:1px solid var(--red-dim);color:var(--red)}
+  .feedback strong{display:block;font-size:14px;margin-bottom:3px}
+  .feedback .fb-body{color:var(--text2);font-size:13px;margin-top:3px}
+  .feedback.wrong .fb-body{color:#ffa07a}
+  .study-ref{background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:9px 12px;margin-top:10px;display:flex;align-items:flex-start;gap:8px}
+  .study-ref .ref-icon{color:var(--gold);font-size:14px;flex-shrink:0;margin-top:1px}
+  .study-ref .ref-text{line-height:1.5}
+  .study-ref .ref-label{font-weight:700;color:var(--gold);font-size:10px;text-transform:uppercase;letter-spacing:.6px;display:block;margin-bottom:2px}
+  .study-ref .ref-src{font-size:12.5px;color:var(--text2)}
+
+  /* ── STREAK ── */
+  .streak-bar{display:flex;gap:4px;justify-content:center;margin-bottom:10px}
+  .streak-dot{width:9px;height:9px;border-radius:50%;background:var(--bg4);border:1px solid var(--border)}
+  .streak-dot.hit{background:var(--green);border-color:var(--green)}
+  .streak-dot.miss{background:var(--red);border-color:var(--red)}
+
+  /* ── RESULTS ── */
+  .result-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:14px;text-align:center}
+  .result-score{font-size:58px;font-weight:900;color:var(--navy);line-height:1}
+  .result-label{font-size:13px;color:var(--text2);margin-top:6px}
+  .result-msg{font-size:14px;font-weight:600;margin-top:10px;color:var(--text)}
+
+  .section-breakdown{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:14px}
+  .section-breakdown h3{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px}
+  .breakdown-row{display:flex;align-items:center;gap:10px;margin-bottom:9px}
+  .breakdown-label{font-size:12px;font-weight:600;width:80px;color:var(--text2)}
+  .breakdown-bar-wrap{flex:1;background:var(--bg4);border-radius:10px;height:10px;overflow:hidden}
+  .breakdown-bar{height:100%;border-radius:10px;transition:width .5s ease}
+  .breakdown-pct{font-size:12px;font-weight:700;min-width:36px;text-align:right}
+
+  /* ── PROGRESS SCREEN ── */
+  .progress-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+  .stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;text-align:center}
+  .stat-num{font-size:32px;font-weight:900;color:var(--navy)}
+  .stat-label{font-size:11px;color:var(--text3);margin-top:4px}
+
+  .weak-list{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:14px}
+  .weak-list h3{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px}
+  .weak-item{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)}
+  .weak-item:last-child{border-bottom:none;padding-bottom:0}
+  .weak-text{font-size:12px;color:var(--text);line-height:1.4;flex:1}
+  .weak-miss{font-size:11px;color:var(--red);font-weight:700;margin-top:2px}
+  .weak-src{font-size:10px;color:var(--text3);margin-bottom:2px}
+
+  .mastered-count{background:var(--green-bg);border:1px solid var(--green-dim);border-radius:10px;padding:11px 16px;text-align:center;margin-bottom:14px}
+  .mastered-count span{color:var(--green);font-weight:700;font-size:13px}
+
+  .empty-state{text-align:center;padding:30px 16px;color:var(--text3);font-size:13px}
+
+  /* ── NAV TABS ── */
+  .nav-tabs{display:flex;background:var(--bg2);border-top:1px solid var(--border);position:fixed;bottom:0;left:0;right:0;z-index:100}
+  .nav-tab{flex:1;padding:10px 4px 14px;border:none;background:transparent;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;font-weight:600;color:var(--text3);transition:.2s}
+  .nav-tab.active{color:var(--navy)}
+  .nav-tab svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+  .main-content{padding-bottom:70px}
+
+  /* ── MODAL ── */
+  .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;align-items:center;justify-content:center}
+  .modal-overlay.show{display:flex}
+  .modal{background:var(--bg3);border:1px solid var(--border2);border-radius:16px;padding:26px;max-width:320px;width:90%;text-align:center}
+  .modal h3{font-size:17px;font-weight:800;margin-bottom:8px;color:var(--text)}
+  .modal p{font-size:13px;color:var(--text2);margin-bottom:20px;line-height:1.5}
+  .modal-btns{display:flex;gap:10px}
+  .modal-btns .btn{margin:0}
+
+  /* ── DIVIDER ── */
+  .section-label{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
+
+  @media(min-width:600px){
+    .section-grid{grid-template-columns:repeat(4,1fr)}
+    .progress-grid{grid-template-columns:repeat(4,1fr)}
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <h1>SGT Exam Practice</h1>
+    <div class="header-sub">San Antonio Police Department</div>
+  </div>
+  <div class="header-badge" id="countdown-badge">17 DAYS</div>
+</div>
+
+<div class="main-content">
+
+  <!-- ══ HOME ══════════════════════════════════════════════════ -->
+  <div id="screen-home" class="screen active">
+    <div class="container">
+      <div class="home-card">
+        <div class="date-badge" id="date-badge">📅 17 days until exam — April 23, 2026 @ 0900</div>
+        <h2>Ready to quiz?</h2>
+        <p>Wrong answers come back more often. The app tracks everything and keeps drilling your weak spots until they're locked in.</p>
+
+        <div class="section-label">Filter by section</div>
+        <div class="section-grid" id="section-filter">
+          <button class="section-btn selected" data-section="gm" onclick="toggleSection(this)">
+            <div class="sb-dot" style="background:var(--navy)"></div>
+            <span class="sb-label">General Manual</span>
+            <span class="sb-count">50 questions</span>
+          </button>
+          <button class="section-btn selected" data-section="pc" onclick="toggleSection(this)">
+            <div class="sb-dot" style="background:var(--green)"></div>
+            <span class="sb-label">Penal Code</span>
+            <span class="sb-count">40 questions</span>
+          </button>
+          <button class="section-btn selected" data-section="tb" onclick="toggleSection(this)">
+            <div class="sb-dot" style="background:var(--brown)"></div>
+            <span class="sb-label">Textbook</span>
+            <span class="sb-count">42 questions</span>
+          </button>
+          <button class="section-btn selected" data-section="cba" onclick="toggleSection(this)">
+            <div class="sb-dot" style="background:var(--cba)"></div>
+            <span class="sb-label">CBA</span>
+            <span class="sb-count">20 questions</span>
+          </button>
+        </div>
+
+        <div class="section-label">Session length</div>
+        <div class="len-group" style="margin-bottom:16px">
+          <button class="len-btn" onclick="setLen(10,this)">10 Qs</button>
+          <button class="len-btn active" onclick="setLen(20,this)">20 Qs</button>
+          <button class="len-btn" onclick="setLen(50,this)">50 Qs</button>
+          <button class="len-btn" onclick="setLen(999,this)">All</button>
+        </div>
+      </div>
+
+      <button class="btn btn-primary" onclick="startSession()">Start Practice Session →</button>
+      <div style="margin-top:10px">
+        <button class="btn btn-secondary" onclick="showScreen('progress')">View My Progress &amp; Weak Areas</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ QUIZ ════════════════════════════════════════════════ -->
+  <div id="screen-quiz" class="screen">
+    <div class="container">
+      <div class="quiz-meta">
+        <span id="quiz-counter">1 / 20</span>
+        <span id="quiz-pill" class="section-pill pill-gm">GM</span>
+        <span id="quiz-score-live" style="color:var(--green);font-weight:800">✓ 0</span>
+      </div>
+      <div class="prog-wrap"><div class="prog-fill" id="quiz-prog" style="width:0%"></div></div>
+      <div class="streak-bar" id="streak-bar"></div>
+
+      <div class="question-card">
+        <div class="q-number" id="q-source"></div>
+        <div class="q-text" id="q-text"></div>
+      </div>
+
+      <div class="choices" id="choices-wrap"></div>
+
+      <div class="feedback" id="feedback">
+        <strong id="feedback-title"></strong>
+        <div class="fb-body" id="feedback-body"></div>
+        <div class="study-ref" id="feedback-source">
+          <span class="ref-icon">📖</span>
+          <div class="ref-text">
+            <span class="ref-label">Study Reference</span>
+            <span class="ref-src" id="ref-src-text"></span>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:12px">
+        <button class="btn btn-primary" id="next-btn" onclick="nextQuestion()" style="display:none">Next →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ RESULTS ════════════════════════════════════════════ -->
+  <div id="screen-results" class="screen">
+    <div class="container">
+      <div class="result-card">
+        <div class="result-score" id="res-score">0%</div>
+        <div class="result-label" id="res-fraction">0 / 0 correct</div>
+        <div class="result-msg" id="res-msg"></div>
+      </div>
+      <div class="section-breakdown">
+        <h3>Section Breakdown</h3>
+        <div id="breakdown-rows"></div>
+      </div>
+      <button class="btn btn-primary" onclick="showScreen('home')" style="margin-bottom:10px">← Back to Home</button>
+      <button class="btn btn-secondary" onclick="startSession()">New Session (same filters)</button>
+      <div style="text-align:center;margin-top:10px">
+        <button class="btn btn-secondary btn-sm" onclick="showScreen('progress')">Full Progress →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ PROGRESS ═══════════════════════════════════════════ -->
+  <div id="screen-progress" class="screen">
+    <div class="container">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+        <h2 style="font-size:16px;font-weight:800;color:var(--text)">My Progress</h2>
+        <button class="btn btn-secondary btn-sm" onclick="confirmReset()" style="color:var(--red);border-color:var(--red)">Reset All</button>
+      </div>
+      <div class="progress-grid" id="stat-grid"></div>
+      <div class="mastered-count" id="mastered-banner"></div>
+      <div class="section-breakdown" style="margin-bottom:14px">
+        <h3>Accuracy by Section</h3>
+        <div id="full-breakdown"></div>
+      </div>
+      <div class="weak-list">
+        <h3>Top Weak Areas (most missed)</h3>
+        <div id="weak-list-wrap"></div>
+      </div>
+      <button class="btn btn-primary" onclick="showScreen('home')" style="margin-top:4px">← Back to Home</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- ── NAV ──────────────────────────────────────────────── -->
+<nav class="nav-tabs">
+  <button class="nav-tab active" onclick="showScreen('home')" id="tab-home">
+    <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    Home
+  </button>
+  <button class="nav-tab" onclick="showScreen('progress')" id="tab-progress">
+    <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+    Progress
+  </button>
+</nav>
+
+<!-- ── RESET MODAL ──────────────────────────────────────── -->
+<div class="modal-overlay" id="reset-modal">
+  <div class="modal">
+    <h3>Reset Progress?</h3>
+    <p>This will clear all scores and history. Can't be undone.</p>
+    <div class="modal-btns">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-danger" onclick="resetAll()">Yes, Reset</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════
+//  QUESTION BANK — 152 total questions
+// ══════════════════════════════════════════════════════
+const QUESTIONS = [
+  {id:1,sec:"gm",src:"Proc. 200 – Rules and Regulations",q:"How often must supervisory officers review the employee locator list they maintain at their residence?",choices:["A. Upon request only", "B. Weekly", "C. Daily", "D. Frequently"],ans:3},
+  {id:2,sec:"gm",src:"Proc. 200 – Rules and Regulations",q:"What is the timeframe for members to report address or telephone number changes?",choices:["A. Within 2 working days", "B. Within 1 working day", "C. Within 5 working days", "D. Within 1 week"],ans:0},
+  {id:3,sec:"gm",src:"Proc. 200 – Rules and Regulations",q:"Under what circumstances may a member drink intoxicating beverages while on-duty?",choices:["A. Never", "B. During break periods", "C. Only off the street", "D. Only with supervisory approval for a specific police assignment"],ans:3},
+  {id:4,sec:"gm",src:"Proc. 200 – Rules and Regulations",q:"What defines insubordination?",choices:["A. Obvious disrespect, disputing orders, failure or deliberate refusal to obey any lawful order", "B. Any disagreement with a supervisor", "C. Reporting policy violations", "D. Asking clarifying questions"],ans:0},
+  {id:5,sec:"gm",src:"Proc. 200 – Rules and Regulations",q:"What is required when a member receives conflicting orders from two supervisors?",choices:["A. Automatically obey the newest order", "B. Refuse to obey either order", "C. File a complaint", "D. Respectfully call attention to the conflict; if not resolved, the conflicting supervisor's order stands"],ans:3},
+  {id:6,sec:"gm",src:"Proc. 200 – Rules and Regulations",q:"May a member be required to obey an order contrary to laws of the United States or Texas statutes?",choices:["A. Only if the supervisor approves", "B. Yes, always", "C. No, members are not required to obey such orders", "D. Only during emergencies"],ans:2},
+  {id:7,sec:"gm",src:"Proc. 200 – Rules and Regulations",q:"What must a member do after receiving an order they believe is unjust?",choices:["A. File a complaint immediately", "B. First obey the order, then may appeal", "C. Refuse to obey", "D. Contact the union"],ans:1},
+  {id:8,sec:"gm",src:"Proc. 200 – Rules and Regulations",q:"What actions are prohibited for a suspended member? (Scenario)",choices:["A. Wearing uniform and exercising police authority", "B. All of the above", "C. Making arrests and carrying identification", "D. Outside employment requiring police services and representing as SAPD member"],ans:1},
+  {id:9,sec:"gm",src:"Proc. 200 – Rules and Regulations",q:"What must an officer do if they discharge a weapon outside the target range or hunting?",choices:["A. Report to Internal Affairs", "B. Verbally report to supervisor", "C. File a written report within 24 hours", "D. Verbally and in writing immediately report to immediate supervisor"],ans:3},
+  {id:10,sec:"gm",src:"Proc. 200 – Rules and Regulations",q:"What must a member provide to the Office of the Chief if arrested or charged with a felony?",choices:["A. A verbal explanation", "B. Nothing until convicted", "C. Only their badge number", "D. Written notification with agency name, charge description, and case number"],ans:3},
+  {id:11,sec:"gm",src:"Proc. 200 – Rules and Regulations",q:"What must members do when immediately notifying supervisors of changes to personal information?",choices:["A. Post on departmental bulletin board", "B. Verbal notification only", "C. Email only", "D. Verbal and written notification"],ans:3},
+  {id:12,sec:"gm",src:"Proc. 200 – Rules and Regulations",q:"What is the requirement regarding promptly and willingly obeying lawful orders?",choices:["A. Officers must request clarification before obeying", "B. Officers may choose which orders to follow", "C. Officers shall promptly and willingly obey all lawful orders", "D. Officers must obey only written orders"],ans:2},
+  {id:13,sec:"gm",src:"Proc. 303 – Disciplinary Procedures",q:"What is the timeframe for investigating a Line Complaint through the chain of command?",choices:["A. 10 calendar days", "B. 21 calendar days", "C. 15 calendar days", "D. 30 calendar days"],ans:1},
+  {id:14,sec:"gm",src:"Proc. 303 – Disciplinary Procedures",q:"What is the maximum suspension a Section Commander can impose for a Line Complaint?",choices:["A. 5 calendar days", "B. 10 calendar days", "C. 30 calendar days", "D. 3 calendar days"],ans:0},
+  {id:15,sec:"gm",src:"Proc. 303 – Disciplinary Procedures",q:"May an officer have an attorney present during Line Complaint interviews?",choices:["A. No", "B. Yes, always", "C. Yes, but only at management's discretion", "D. Only in serious cases"],ans:0},
+  {id:16,sec:"gm",src:"Proc. 303 – Disciplinary Procedures",q:"What is a Formal Complaint?",choices:["A. Any complaint filed in writing", "B. All complaints beyond the first supervisor", "C. Disciplinary matters with significant variance such as crimes, harassment, or excessive force", "D. Complaints investigated by Internal Affairs"],ans:2},
+  {id:17,sec:"gm",src:"Proc. 303 – Disciplinary Procedures",q:"If an officer agrees to expedited disciplinary track, how many days must the disciplinary action be enacted?",choices:["A. Within 60 calendar days", "B. Within 14 calendar days", "C. Within 30 calendar days", "D. Within 90 calendar days"],ans:2},
+  {id:18,sec:"gm",src:"Proc. 303 – Disciplinary Procedures",q:"What is a Service Complaint?",choices:["A. Citizen dissatisfaction with police services not involving officer misconduct", "B. A complaint about response time only", "C. A complaint about an officer's conduct", "D. A complaint filed in court"],ans:0},
+  {id:19,sec:"gm",src:"Proc. 303 – Disciplinary Procedures",q:"Who must be identified as the principal complainant for a formal complaint?",choices:["A. A fellow officer", "B. A party from outside the Department", "C. The Chief of Police", "D. A city council member"],ans:1},
+  {id:20,sec:"gm",src:"Proc. 303 – Disciplinary Procedures",q:"When must a supervisor report discrimination or harassment that has generated a complaint?",choices:["A. At the next CARB meeting", "B. Within 24 hours", "C. Within 2 days", "D. Within 72 hours"],ans:1},
+  {id:21,sec:"gm",src:"Proc. 303 – Disciplinary Procedures",q:"What is the minimum quorum for the Citizens Advisory Action Board of CARB?",choices:["A. 3 members", "B. 5 members", "C. 4 members", "D. 2 members"],ans:0},
+  {id:22,sec:"gm",src:"Proc. 303 – Disciplinary Procedures",q:"What is the minimum quorum for the Police Advisory Action Board of CARB?",choices:["A. 4 members", "B. 5 sworn members", "C. 3 members", "D. 6 members"],ans:1},
+  {id:23,sec:"gm",src:"Proc. 303 – Disciplinary Procedures",q:"When a Line Complaint results in a contemplated suspension, what form is presented to the subject officer?",choices:["A. SAPD Form 10", "B. SAPD Form 100", "C. SAPD Form 6", "D. SAPD Form 200"],ans:0},
+  {id:24,sec:"gm",src:"Proc. 303 – Disciplinary Procedures",q:"In a complaint scenario, if an officer disputes a suspension recommendation, where does the case go? (Scenario)",choices:["A. To CARB for immediate review", "B. Back to the original supervisor", "C. Directly to the Chief", "D. To the Internal Affairs Unit for formal investigation"],ans:3},
+  {id:25,sec:"gm",src:"Proc. 303 – Disciplinary Procedures",q:"What does the Department adhere to in its disciplinary practices?",choices:["A. Progressive discipline", "B. Random discipline", "C. Harsh punishment", "D. Lenient discipline"],ans:0},
+  {id:26,sec:"gm",src:"Proc. 303 – Disciplinary Procedures",q:"Who shall determine which unit investigates allegations of criminal misconduct?",choices:["A. The accused officer's supervisor", "B. The District Attorney", "C. Internal Affairs", "D. The Chief of Police"],ans:3},
+  {id:27,sec:"gm",src:"Proc. 306 – Officer Concern Program",q:"What is the purpose of the Officer Concern Program?",choices:["A. To track disciplinary history", "B. To investigate complaints against officers", "C. To identify officers showing signs of distress and provide support resources", "D. To monitor officer performance"],ans:2},
+  {id:28,sec:"gm",src:"Proc. 306 – Officer Concern Program",q:"Who are the primary beneficiaries of the Officer Concern Program?",choices:["A. Officers in distress and their families", "B. The Chief of Police", "C. Only supervisors", "D. Only Internal Affairs"],ans:0},
+  {id:29,sec:"gm",src:"Proc. 307 – Public Media Information",q:"Who is authorized to release information to the media?",choices:["A. Any supervisor", "B. Any department member", "C. Only detectives", "D. Only the Chief of Police or Public Information Officer"],ans:3},
+  {id:30,sec:"gm",src:"Proc. 307 – Public Media Information",q:"What information must be restricted from public reports?",choices:["A. Crime statistics", "B. Investigative techniques, opinions, suspect identities, and confidential information", "C. Officer names", "D. Arrest location"],ans:1},
+  {id:31,sec:"gm",src:"Proc. 309 – Weapons",q:"What is the primary weapon for SAPD officers?",choices:["A. 9mm handgun", "B. Shotgun", "C. .40 caliber semi-automatic handgun", "D. Revolver"],ans:2},
+  {id:32,sec:"gm",src:"Proc. 309 – Weapons",q:"Where must officers qualify with their duty weapon?",choices:["A. Any location is acceptable", "B. At any approved range", "C. At the department's approved range", "D. Off-duty on their own range"],ans:2},
+  {id:33,sec:"gm",src:"Proc. 309 – Weapons",q:"How often must officers qualify with their duty weapon?",choices:["A. Annually", "B. As needed", "C. Every 6 months", "D. Every 2 years"],ans:0},
+  {id:34,sec:"gm",src:"Proc. 309 – Weapons",q:"What type of ammunition is required for duty weapons?",choices:["A. Full metal jacket only", "B. Only department-approved ammunition", "C. Hollow point only", "D. Any ammunition available"],ans:1},
+  {id:35,sec:"gm",src:"Proc. 310 – Uniform and Dress Code",q:"What color is the SAPD patrol uniform shirt?",choices:["A. Black", "B. Dark blue", "C. Light blue", "D. Navy blue"],ans:2},
+  {id:36,sec:"gm",src:"Proc. 310 – Uniform and Dress Code",q:"Are officers required to be in uniform at all times while on-duty?",choices:["A. Depends on assignment", "B. Only while on patrol", "C. Yes, always", "D. Only when meeting the public"],ans:0},
+  {id:37,sec:"gm",src:"Proc. 310 – Uniform and Dress Code",q:"What is required for proper grooming of SAPD officers?",choices:["A. No specific requirements", "B. Long hair is permitted", "C. Hair, facial hair, and personal appearance must be neat and professional", "D. Mustaches only"],ans:2},
+  {id:38,sec:"gm",src:"Proc. 311 – Court Appearances",q:"What must an officer do if subpoenaed to appear in court?",choices:["A. Appear as required by law", "B. Decline if too busy", "C. Notify their supervisor it's not mandatory", "D. Only appear if the case is important"],ans:0},
+  {id:39,sec:"gm",src:"Proc. 311 – Court Appearances",q:"How should an officer appear in court?",choices:["A. In full uniform or professional business attire", "B. Business casual", "C. In casual attire", "D. As they see fit"],ans:0},
+  {id:40,sec:"gm",src:"Proc. 313 – Use Of City Vehicles",q:"Who is responsible for maintaining city vehicles in proper condition?",choices:["A. The city fleet manager", "B. The assigned officer", "C. The department maintenance staff only", "D. The department supervisor"],ans:1},
+  {id:41,sec:"gm",src:"Proc. 313 – Use Of City Vehicles",q:"What must an officer do if they discover damage to a city vehicle?",choices:["A. Repair it themselves", "B. Report it to their supervisor immediately", "C. Say nothing", "D. Document it on their personal log"],ans:1},
+  {id:42,sec:"gm",src:"Proc. 314 – Command Notification",q:"When must an on-duty officer notify an officer's supervisor of a disturbance involving that officer?",choices:["A. Within 24 hours", "B. At the end of shift", "C. Immediately", "D. Before leaving the scene"],ans:3},
+  {id:43,sec:"gm",src:"Proc. 314 – Command Notification",q:"What must happen when a supervisor is notified of a disturbance involving an officer?",choices:["A. Make the scene", "B. Call the officer directly", "C. Report it to Internal Affairs immediately", "D. Ignore it"],ans:0},
+  {id:44,sec:"gm",src:"Proc. 315 – Line Inspections",q:"What is the primary purpose of line inspections?",choices:["A. To count attendance", "B. To inspect uniforms, equipment, and compliance with regulations", "C. To assign work", "D. To intimidate officers"],ans:1},
+  {id:45,sec:"gm",src:"Proc. 315 – Line Inspections",q:"Who conducts line inspections?",choices:["A. Only the Chief", "B. Only Internal Affairs", "C. Supervisory officers", "D. Any officer"],ans:2},
+  {id:46,sec:"gm",src:"Proc. 318 – Labor Relations Committee",q:"What is the Labor Relations Committee responsible for?",choices:["A. Setting pay scales", "B. Conducting internal affairs investigations", "C. Hiring and firing", "D. Addressing labor-management issues and improving communications"],ans:3},
+  {id:47,sec:"gm",src:"Proc. 318 – Labor Relations Committee",q:"Who typically serves on the Labor Relations Committee?",choices:["A. Only management", "B. Only the Chief", "C. Management and union representatives", "D. Only officers"],ans:2},
+  {id:48,sec:"gm",src:"Proc. 324 – Performance Evaluations",q:"How often are regular performance evaluations conducted?",choices:["A. Monthly", "B. Quarterly", "C. Every 2 years", "D. Annually"],ans:3},
+  {id:49,sec:"gm",src:"Proc. 324 – Performance Evaluations",q:"What is the purpose of performance evaluations?",choices:["A. To compare officers unfairly", "B. To assess competence and provide feedback for development", "C. Only to find problems", "D. To justify termination"],ans:1},
+  {id:50,sec:"gm",src:"Proc. 325 – Training and Career Development",q:"What is the focus of the Training and Career Development program?",choices:["A. Reducing overtime", "B. Punishment of poor performers", "C. Documenting violations", "D. Developing officer skills and career advancement"],ans:3},
+  {id:51,sec:"gm",src:"Proc. 325 – Training and Career Development",q:"Who is responsible for ensuring officers complete required training?",choices:["A. Only the officer", "B. Headquarters only", "C. The department and supervisory staff", "D. The union"],ans:2},
+  {id:52,sec:"gm",src:"Proc. 330 – Social Media",q:"Are officers permitted to use personal social media accounts while on-duty?",choices:["A. Yes, always", "B. No", "C. Only with supervisory permission", "D. Only during breaks"],ans:1},
+  {id:53,sec:"gm",src:"Proc. 330 – Social Media",q:"What must officers remember when using social media off-duty?",choices:["A. Any post is acceptable", "B. Only post positive information", "C. They represent the department and should not post derogatory content about the department or public", "D. No restrictions"],ans:2},
+  {id:54,sec:"gm",src:"Proc. 401 – Offense/Incident/Supplement Reports",q:"What is the purpose of a supplement report?",choices:["A. To add additional information to an existing report", "B. To replace the original incident report", "C. To supersede the original finding", "D. To correct all errors in the original"],ans:0},
+  {id:55,sec:"gm",src:"Proc. 401 – Offense/Incident/Supplement Reports",q:"When should a supplement report be filed?",choices:["A. At the end of the month", "B. Only if an error is found", "C. Never", "D. When additional information becomes available after the original report"],ans:3},
+  {id:56,sec:"gm",src:"Proc. 403 – Communications",q:"What must an officer do upon receiving an emergency call from dispatch?",choices:["A. Ignore if on another call", "B. Acknowledge receipt and respond", "C. Wait for clarification", "D. Report to a supervisor first"],ans:1},
+  {id:57,sec:"gm",src:"Proc. 403 – Communications",q:"What is dispatch responsible for?",choices:["A. Call receipt, prioritization, and unit dispatch", "B. Investigation direction", "C. Patrol assignments only", "D. Arrest decisions"],ans:0},
+  {id:58,sec:"gm",src:"Proc. 403 – Communications",q:"When must an officer report their status to dispatch?",choices:["A. Only in emergencies", "B. Per dispatcher instructions for call status updates", "C. Only at the end of shift", "D. Never"],ans:1},
+  {id:59,sec:"gm",src:"Proc. 409 – Mobile Video Recording(COBAN)",q:"When must a Mobile Video Recording (COBAN) system be activated?",choices:["A. Only during traffic stops", "B. During all law enforcement activities", "C. Never", "D. Only when conducting arrests"],ans:1},
+  {id:60,sec:"gm",src:"Proc. 409 – Mobile Video Recording(COBAN)",q:"Who can request the recording from a Mobile Video system?",choices:["A. Anyone", "B. Only supervisors", "C. Citizens under certain circumstances per department policy", "D. Only the officer in the vehicle"],ans:2},
+  {id:61,sec:"gm",src:"Proc. 409 – Mobile Video Recording(COBAN)",q:"What must happen to COBAN recordings?",choices:["A. Immediately delete them", "B. Store indefinitely", "C. Maintain them per department policy and evidence retention", "D. Keep only if an arrest is made"],ans:2},
+  {id:62,sec:"gm",src:"Proc. 410 – Body Worn Cameras(BWC)",q:"When must an officer activate their Body Worn Camera?",choices:["A. At the beginning of shift", "B. When starting any law enforcement activity", "C. Only during arrests", "D. Only if a supervisory order is given"],ans:1},
+  {id:63,sec:"gm",src:"Proc. 410 – Body Worn Cameras(BWC)",q:"Who has access to Body Worn Camera footage?",choices:["A. Only internal affairs", "B. Authorized personnel per department policy", "C. Anyone upon request", "D. Any officer"],ans:1},
+  {id:64,sec:"gm",src:"Proc. 410 – Body Worn Cameras(BWC)",q:"What must officers do at the end of their shift regarding BWC recordings?",choices:["A. Leave recording", "B. Delete questionable footage", "C. Keep personal copies", "D. Upload and secure per department policy"],ans:3},
+  {id:65,sec:"gm",src:"Proc. 410 – Body Worn Cameras(BWC)",q:"How should officers position a Body Worn Camera?",choices:["A. Anywhere on the body", "B. Optional positioning", "C. Only on the shoulder", "D. To capture the officer's perspective of events"],ans:3},
+  {id:66,sec:"gm",src:"Proc. 501 – Response to Resistance",q:"What is the appropriate first response to passive resistance?",choices:["A. Immediately use physical force", "B. Use of weaponry", "C. Verbal commands and de-escalation attempts", "D. Restraint without communication"],ans:2},
+  {id:67,sec:"gm",src:"Proc. 501 – Response to Resistance",q:"When is the use of force justified in police work?",choices:["A. Only during arrests", "B. When necessary to accomplish a lawful objective and all alternatives have been exhausted", "C. When an officer feels threatened", "D. To punish a suspect"],ans:1},
+  {id:68,sec:"gm",src:"Proc. 501 – Response to Resistance",q:"What must officers consider when responding to resistance?",choices:["A. De-escalation, proportionality, and suspect safety", "B. Speed of response only", "C. Only the seriousness of the crime", "D. Only officer safety"],ans:0},
+  {id:69,sec:"gm",src:"Proc. 502 – Warrantless Arrests, Searches, and Seizures",q:"When may an officer make a warrantless arrest?",choices:["A. Never", "B. Anytime", "C. Only when an offense is committed in their presence or there is probable cause", "D. Only during the day"],ans:2},
+  {id:70,sec:"gm",src:"Proc. 502 – Warrantless Arrests, Searches, and Seizures",q:"What authority is required to search a private residence without a warrant?",choices:["A. Consent from the resident or exigent circumstances", "B. Only the officer's judgment", "C. Suspicion of a crime", "D. Just because backup is available"],ans:0},
+  {id:71,sec:"gm",src:"Proc. 502 – Warrantless Arrests, Searches, and Seizures",q:"What are exigent circumstances?",choices:["A. Never justified", "B. Urgent situations where waiting for a warrant would result in loss of evidence or danger", "C. Any time an officer wants to search", "D. Only during felonies"],ans:1},
+  {id:72,sec:"gm",src:"Proc. 503 – Obtaining a search warrant",q:"What must an officer establish to obtain a search warrant?",choices:["A. The target's criminal history", "B. Suspicion of criminal activity", "C. A citizen complaint", "D. Probable cause that evidence of a crime is at the location"],ans:3},
+  {id:73,sec:"gm",src:"Proc. 503 – Obtaining a search warrant",q:"Who issues a search warrant?",choices:["A. The district attorney", "B. The police chief", "C. A judge or magistrate", "D. Any supervisor"],ans:2},
+  {id:74,sec:"gm",src:"Proc. 503 – Obtaining a search warrant",q:"What documentation is required to support a search warrant application?",choices:["A. Hearsay information", "B. Officer's opinion only", "C. Anonymous tips only", "D. Affidavit detailing facts establishing probable cause"],ans:3},
+  {id:75,sec:"gm",src:"Proc. 504 – Execution of Search Warrants",q:"What must officers do before executing a search warrant?",choices:["A. Search immediately without warning", "B. Announce their presence and purpose", "C. Call the resident first", "D. Wait 24 hours"],ans:1},
+  {id:76,sec:"gm",src:"Proc. 504 – Execution of Search Warrants",q:"When must a copy of the search warrant be left?",choices:["A. Before leaving the premises", "B. Never", "C. Only if requested", "D. Upon completion of the search"],ans:0},
+  {id:77,sec:"gm",src:"Proc. 505 – Misdemeanor Citation Release",q:"When may an officer issue a citation instead of making an arrest?",choices:["A. When the officer chooses to", "B. When there is reasonable expectation the person will appear in court", "C. Only for traffic violations", "D. Never"],ans:1},
+  {id:78,sec:"gm",src:"Proc. 505 – Misdemeanor Citation Release",q:"What determines citation release eligibility?",choices:["A. Officer preference only", "B. Attitude only", "C. Identification, ties to the community, and criminal history", "D. Race and age"],ans:2},
+  {id:79,sec:"gm",src:"Proc. 506 – Traffic Law Enforcement",q:"What must an officer do immediately upon stopping a vehicle?",choices:["A. Conduct a search of the vehicle", "B. Identify themselves and explain the reason for the stop", "C. Request the driver exit the vehicle", "D. Ask for driver's license and proof of insurance"],ans:1},
+  {id:80,sec:"gm",src:"Proc. 506 – Traffic Law Enforcement",q:"When may an officer request a driver exit a vehicle during a traffic stop?",choices:["A. Never", "B. Only during felony stops", "C. For any reason", "D. At the officer's discretion for officer safety"],ans:3},
+  {id:81,sec:"gm",src:"Proc. 506 – Traffic Law Enforcement",q:"What must be documented in a traffic citation?",choices:["A. Vehicle information, driver information, violation details, and officer identification", "B. Officer's opinion only", "C. Nothing in particular", "D. Only the violation code"],ans:0},
+  {id:82,sec:"gm",src:"Proc. 507 – DWI Arrests",q:"What is the legal blood alcohol concentration limit for a DWI arrest in Texas?",choices:["A. .12%", "B. .05%", "C. .08%", "D. .10%"],ans:2},
+  {id:83,sec:"gm",src:"Proc. 507 – DWI Arrests",q:"What indicators of impairment should officers look for during a DWI investigation?",choices:["A. Appearance only", "B. Age only", "C. Speech patterns, balance, coordination, odor of alcohol, and driving patterns", "D. Red eyes only"],ans:2},
+  {id:84,sec:"gm",src:"Proc. 507 – DWI Arrests",q:"When should officers administer field sobriety tests?",choices:["A. Never", "B. Only on weekends", "C. Always", "D. When probable cause for impairment exists"],ans:3},
+  {id:85,sec:"gm",src:"Proc. 508 – Field Contacts",q:"What is a field contact?",choices:["A. A traffic citation", "B. An interaction with a person to obtain information or clarify a situation", "C. A meeting with a supervisor", "D. An arrest"],ans:1},
+  {id:86,sec:"gm",src:"Proc. 508 – Field Contacts",q:"What must officers do during field contacts to ensure civil rights?",choices:["A. Target specific groups", "B. Not profile based on protected characteristics", "C. Nothing special", "D. Only contact citizens who volunteer information"],ans:1},
+  {id:87,sec:"gm",src:"Proc. 509 – Legal Asset Seizure",q:"What property may be seized during a lawful arrest?",choices:["A. Only weapons", "B. Everything the person owns", "C. Items related to the crime and items on the person", "D. Any item the officer wants"],ans:2},
+  {id:88,sec:"gm",src:"Proc. 509 – Legal Asset Seizure",q:"What must be done with seized property?",choices:["A. Return immediately", "B. Inventory, document, and store per department policy", "C. Discard it", "D. Keep it in the patrol car"],ans:1},
+  {id:89,sec:"gm",src:"Proc. 510 – Carrying of Handguns",q:"What type of holster must be used for carrying an on-duty handgun?",choices:["A. A soft carrying pouch", "B. Any type the officer prefers", "C. Carried in pocket", "D. A department-approved quality holster"],ans:3},
+  {id:90,sec:"gm",src:"Proc. 510 – Carrying of Handguns",q:"Where must officers carry their off-duty weapon?",choices:["A. Openly displayed", "B. Wherever they want", "C. In a concealed manner in an approved holster", "D. In a backpack"],ans:2},
+  {id:91,sec:"gm",src:"Proc. 512 – Electronic Control Device",q:"When may an Electronic Control Device (Taser) be used?",choices:["A. Only for training", "B. Anytime", "C. Never", "D. When a person poses a threat and other methods have failed"],ans:3},
+  {id:92,sec:"gm",src:"Proc. 512 – Electronic Control Device",q:"Who may carry an Electronic Control Device?",choices:["A. Any officer", "B. Tactical units only", "C. Only supervisors", "D. Only officers trained and certified per department policy"],ans:3},
+  {id:93,sec:"gm",src:"Proc. 512 – Electronic Control Device",q:"What must an officer do after using an ECD on a subject? (Scenario)",choices:["A. Do nothing", "B. Seek medical evaluation for the subject and document the incident", "C. Leave the scene", "D. Arrest immediately"],ans:1},
+  {id:94,sec:"gm",src:"Proc. 601 – Prisoners",q:"What must be done when booking a prisoner?",choices:["A. Inventory their property and complete proper documentation", "B. Just record their name", "C. Skip property inventory if busy", "D. Release without documentation"],ans:0},
+  {id:95,sec:"gm",src:"Proc. 601 – Prisoners",q:"How must officers transport a prisoner to jail?",choices:["A. Any way they choose", "B. In the officer's personal vehicle", "C. In the safest manner with appropriate restraints", "D. Without restraints if the jail is nearby"],ans:2},
+  {id:96,sec:"gm",src:"Proc. 601 – Prisoners",q:"What precautions must officers take with prisoner transportation?",choices:["A. Just drive normally", "B. Transport at high speeds", "C. None", "D. Proper restraint, secure vehicle, and no unsupervised access to weapons"],ans:3},
+  {id:97,sec:"gm",src:"Proc. 602 – Juveniles",q:"What special consideration must be given when apprehending a juvenile?",choices:["A. None, treat them like adults", "B. Treat them more harshly", "C. Release them immediately", "D. Parent/guardian notification and age-appropriate handling"],ans:3},
+  {id:98,sec:"gm",src:"Proc. 602 – Juveniles",q:"What information must be communicated to parents/guardians?",choices:["A. Reason for contact, location, and what happens next", "B. Nothing", "C. Officer name only", "D. Only the charge"],ans:0},
+  {id:99,sec:"gm",src:"Proc. 602 – Juveniles",q:"Where should juveniles be held if taken into custody?",choices:["A. Regular holding cells", "B. The patrol car", "C. Juvenile detention facilities or age-appropriate areas", "D. Anywhere available"],ans:2},
+  {id:100,sec:"gm",src:"Proc. 604 – Family Disturbance/Violence",q:"What is the primary goal when responding to a family disturbance?",choices:["A. Separate and never reunite parties", "B. Always make an arrest", "C. To restore peace and provide safety resources", "D. Stay out of family matters"],ans:2},
+  {id:101,sec:"gm",src:"Proc. 604 – Family Disturbance/Violence",q:"When a family violence suspect has weapons, what must occur? (Scenario)",choices:["A. Let the family handle it", "B. Officers must secure the weapons and assess safety", "C. Leave and wait for backup", "D. Ignore the weapons"],ans:1},
+  {id:102,sec:"gm",src:"Proc. 604 – Family Disturbance/Violence",q:"What resources must officers offer to family violence victims?",choices:["A. Only arrest information", "B. Contact information for perpetrator", "C. Shelter information, victim services, and medical resources", "D. None"],ans:2},
+  {id:103,sec:"gm",src:"Proc. 605 – Miscellaneous Offenses and Complaint Calls",q:"What should an officer do responding to a complaint call without obvious criminal activity?",choices:["A. Leave without taking action", "B. Investigate and document, providing appropriate referrals", "C. Contact a supervisor immediately", "D. Always arrest someone"],ans:1},
+  {id:104,sec:"gm",src:"Proc. 605 – Miscellaneous Offenses and Complaint Calls",q:"What types of calls fall under miscellaneous offenses?",choices:["A. Only family matters", "B. Minor infractions, welfare checks, and other non-criminal issues", "C. Only major felonies", "D. Only traffic citations"],ans:1},
+  {id:105,sec:"gm",src:"Proc. 606 – Impounding Property",q:"When property is seized and impounded, what must happen?",choices:["A. Only recorded verbally", "B. Property is disposed of immediately", "C. No documentation needed", "D. Proper inventory and receipt given to owner/claimant"],ans:3},
+  {id:106,sec:"gm",src:"Proc. 606 – Impounding Property",q:"How long must impounded property be stored?",choices:["A. For 30 days only", "B. Per departmental evidence retention policy", "C. Until the shift ends", "D. Indefinitely"],ans:1},
+  {id:107,sec:"gm",src:"Proc. 607 – Impounding Vehicle",q:"What is the proper procedure when a vehicle must be impounded?",choices:["A. Leave keys in the vehicle", "B. Inventory later", "C. Tow immediately without notice", "D. Notify owner and follow department impound procedures"],ans:3},
+  {id:108,sec:"gm",src:"Proc. 607 – Impounding Vehicle",q:"What must be documented for an impounded vehicle?",choices:["A. Nothing", "B. Vehicle description, VIN, condition, contents, and tow details", "C. VIN only", "D. Only the tow company"],ans:1},
+  {id:109,sec:"gm",src:"Proc. 608 – Stolen Vehicle Recovery",q:"What must be done upon recovery of a stolen vehicle?",choices:["A. Return it immediately to the owner", "B. Keep it for department use", "C. Auction it", "D. Process it as evidence and notify the owner/insurance"],ans:3},
+  {id:110,sec:"gm",src:"Proc. 608 – Stolen Vehicle Recovery",q:"What evidence must be collected from a recovered stolen vehicle?",choices:["A. Only photos", "B. Fingerprints, trace evidence, and damage documentation", "C. The license plate", "D. Nothing"],ans:1},
+  {id:111,sec:"gm",src:"Proc. 609 – Emergency Vehicle Response and Foot Pursuit",q:"When responding to an emergency with lights and siren, what must officers remember?",choices:["A. They are exempt from traffic laws", "B. They must still drive safely within the limits of their vehicle and road conditions", "C. Speed is the only concern", "D. Turn signals are not needed"],ans:1},
+  {id:112,sec:"gm",src:"Proc. 609 – Emergency Vehicle Response and Foot Pursuit",q:"When is foot pursuit justified?",choices:["A. Always", "B. Only when serious crime is involved and risk is justified", "C. Only during daylight", "D. Never"],ans:1},
+  {id:113,sec:"gm",src:"Proc. 609 – Emergency Vehicle Response and Foot Pursuit",q:"What must supervisors do during a foot pursuit in progress in their area? (Scenario)",choices:["A. Monitor and provide guidance and backup", "B. Ignore it", "C. Leave the jurisdiction", "D. Call for more units without monitoring"],ans:0},
+  {id:114,sec:"gm",src:"Proc. 610 – Missing Persons",q:"How quickly should an officer initiate a missing person investigation?",choices:["A. Immediately, especially for at-risk individuals", "B. Only after 48 hours", "C. After a week", "D. Only if a report is filed"],ans:0},
+  {id:115,sec:"gm",src:"Proc. 610 – Missing Persons",q:"What information is critical in a missing person report?",choices:["A. Physical description, clothing, habits, and circumstances", "B. Only name", "C. Age only", "D. Just the address"],ans:0},
+  {id:116,sec:"gm",src:"Proc. 610 – Missing Persons",q:"When should officers be suspicious of a missing person case? (Scenario)",choices:["A. Never be suspicious", "B. When circumstances indicate foul play, patterns of behavior, or danger", "C. Only if the person is wealthy", "D. Always assume foul play"],ans:1},
+  {id:117,sec:"gm",src:"Proc. 611 – Mentally Ill Persons",q:"What approach should officers use when encountering a person with mental illness?",choices:["A. Ignore their condition", "B. De-escalation and seeking mental health resources", "C. Arrest immediately", "D. Assume they are dangerous"],ans:1},
+  {id:118,sec:"gm",src:"Proc. 611 – Mentally Ill Persons",q:"What resources must officers know about for mentally ill persons?",choices:["A. Only hospitals", "B. Only jails", "C. Mental health facilities, crisis hotlines, and support services", "D. Family resources only"],ans:2},
+  {id:119,sec:"gm",src:"Proc. 611 – Mentally Ill Persons",q:"What must officers avoid when contacting mentally ill persons? (Scenario)",choices:["A. Sudden movements, loud noises, and confrontational language", "B. Nothing special", "C. Using clear communication", "D. Being polite"],ans:0},
+  {id:120,sec:"gm",src:"Proc. 612 – Deaf or Hearing Impaired",q:"What accommodation must officers provide to a deaf or hearing impaired person?",choices:["A. None", "B. Write everything on paper", "C. Interpreter or visual communication methods as appropriate", "D. Speak louder"],ans:2},
+  {id:121,sec:"gm",src:"Proc. 612 – Deaf or Hearing Impaired",q:"How should officers communicate with a deaf person who cannot read lips? (Scenario)",choices:["A. Provide an interpreter or use visual aids", "B. Give written commands", "C. Assume they understand", "D. Use loud voices"],ans:0},
+  {id:122,sec:"gm",src:"Proc. 615 – Exposure to communicable Disease and Other Public Health Risks",q:"What must an officer do after potential exposure to a communicable disease?",choices:["A. Continue working normally", "B. Only report if symptoms develop", "C. Nothing", "D. Seek medical attention and report the exposure"],ans:3},
+  {id:123,sec:"gm",src:"Proc. 615 – Exposure to communicable Disease and Other Public Health Risks",q:"What precautions must officers take with biohazardous materials?",choices:["A. Ignore them", "B. None", "C. Just wash hands", "D. Gloves, masks, and proper disposal per policy"],ans:3},
+  {id:124,sec:"gm",src:"Proc. 618 – Racial/Bias Profiling/Immigration Policy",q:"Is racial profiling permitted under SAPD policy?",choices:["A. Yes, if effective", "B. Only in specific neighborhoods", "C. Only in serious crimes", "D. No, it is strictly prohibited"],ans:3},
+  {id:125,sec:"gm",src:"Proc. 618 – Racial/Bias Profiling/Immigration Policy",q:"What must officers base law enforcement decisions on?",choices:["A. Observable behavior and evidence", "B. Assumptions", "C. Neighborhood demographics", "D. Race or ethnicity"],ans:0},
+  {id:126,sec:"gm",src:"Proc. 619 – Consulate Notification and Diplomatic Immunity",q:"When must a foreign national be offered consulate notification?",choices:["A. Only if they request it", "B. Only in serious crimes", "C. Never", "D. Immediately upon arrest or detention"],ans:3},
+  {id:127,sec:"gm",src:"Proc. 619 – Consulate Notification and Diplomatic Immunity",q:"What is diplomatic immunity?",choices:["A. All foreigners have it", "B. It only applies to diplomats during work", "C. Certain officials are exempt from local jurisdiction", "D. Everyone has it"],ans:2},
+  {id:128,sec:"gm",src:"Proc. 620 – Vehicle Pursuit and Stop Techniques",q:"When may an officer engage in a vehicle pursuit?",choices:["A. Only when authorized and risk is justified by the seriousness of the crime", "B. Anytime a vehicle fails to stop", "C. Never", "D. Only at night"],ans:0},
+  {id:129,sec:"gm",src:"Proc. 620 – Vehicle Pursuit and Stop Techniques",q:"What must a supervisor do when a vehicle pursuit is in progress in their area?",choices:["A. Leave the jurisdiction", "B. Ignore it", "C. Continue their current duties", "D. Monitor and provide guidance"],ans:3},
+  {id:130,sec:"gm",src:"Proc. 620 – Vehicle Pursuit and Stop Techniques",q:"When must a supervisor terminate a vehicle pursuit? (Scenario)",choices:["A. Never", "B. Always", "C. Only at night", "D. When danger to public exceeds apprehension benefit"],ans:3},
+  {id:131,sec:"gm",src:"Proc. 620 – Vehicle Pursuit and Stop Techniques",q:"What technique can be used to stop a fleeing vehicle safely?",choices:["A. PIT maneuver when appropriate and trained", "B. Ramming only", "C. Shooting at the vehicle", "D. Any available method"],ans:0},
+  {id:132,sec:"gm",src:"Proc. 701 – Crime Scene Duties",q:"What is the primary responsibility at a crime scene?",choices:["A. Securing the scene and preserving evidence", "B. Collecting all items found", "C. Interviewing all witnesses immediately", "D. Photographing evidence"],ans:0},
+  {id:133,sec:"gm",src:"Proc. 701 – Crime Scene Duties",q:"How must evidence be collected and documented?",choices:["A. Only photographed", "B. No documentation needed", "C. In a manner that preserves chain of custody", "D. Collected in any available container"],ans:2},
+  {id:134,sec:"gm",src:"Proc. 701 – Crime Scene Duties",q:"Who may enter a secured crime scene? (Scenario)",choices:["A. The public if they want", "B. Only detectives", "C. Only authorized personnel documented for the investigation", "D. Anyone with a badge"],ans:2},
+  {id:135,sec:"gm",src:"Proc. 701 – Crime Scene Duties",q:"How long must a crime scene remain secured?",choices:["A. Until the first officer leaves", "B. Indefinitely", "C. For 24 hours only", "D. Until authorized personnel determine it can be released"],ans:3},
+  {id:136,sec:"gm",src:"Proc. 702 – Eyewitness Identification",q:"What is a critical requirement for eyewitness identification procedures?",choices:["A. No documentation necessary", "B. Unbiased procedures that don't suggest the suspect", "C. Using photos from booking records only", "D. Leading questions to refresh memory"],ans:1},
+  {id:137,sec:"gm",src:"Proc. 702 – Eyewitness Identification",q:"What is the most reliable form of eyewitness identification?",choices:["A. Officer suggestions", "B. Photo lineup", "C. Verbal description only", "D. Live lineup with proper procedures"],ans:3},
+  {id:138,sec:"gm",src:"Proc. 703 – Handling of Sexual Assault Complaints",q:"What special consideration must be given to sexual assault complainants?",choices:["A. Skepticism of their account", "B. Sensitivity, trauma-informed response, and victim support resources", "C. Immediate arrest of suspect without investigation", "D. No special consideration"],ans:1},
+  {id:139,sec:"gm",src:"Proc. 703 – Handling of Sexual Assault Complaints",q:"What resources must be offered to sexual assault victims?",choices:["A. Only police report", "B. Just contact information", "C. Medical care, counseling services, and legal information", "D. None"],ans:2},
+  {id:140,sec:"gm",src:"Proc. 704 – Apparent Sudden Death",q:"What must be done when an officer finds an apparent sudden death?",choices:["A. Secure the scene and notify appropriate units for investigation", "B. Assume natural causes", "C. Contact family immediately", "D. Immediately move the body"],ans:0},
+  {id:141,sec:"gm",src:"Proc. 704 – Apparent Sudden Death",q:"Who investigates a suspicious sudden death? (Scenario)",choices:["A. Just dispatch", "B. Detectives and medical examiner", "C. The first officer only", "D. Family members"],ans:1},
+  {id:142,sec:"gm",src:"Proc. 705 – Officer Involved Shooting and Custodial Deaths",q:"What must occur immediately after an officer discharges their weapon?",choices:["A. Continue patrol", "B. Speak only with the accused officer", "C. Leave the scene", "D. Notify supervisory personnel and follow department procedures"],ans:3},
+  {id:143,sec:"gm",src:"Proc. 705 – Officer Involved Shooting and Custodial Deaths",q:"What reporting is required for an officer-involved shooting?",choices:["A. Verbal report only", "B. Only if someone is injured", "C. Written report to command and Internal Affairs", "D. No reporting necessary"],ans:2},
+  {id:144,sec:"gm",src:"Proc. 706 – Assault on Peace Officers",q:"What must an officer do if assaulted while performing duties?",choices:["A. Only report to supervisors", "B. Report and document the incident", "C. Retaliate physically", "D. Ignore it"],ans:1},
+  {id:145,sec:"gm",src:"Proc. 706 – Assault on Peace Officers",q:"What is the legal consequence of assaulting a peace officer?",choices:["A. Only a warning", "B. Department discipline only", "C. Criminal charges and enhanced penalties", "D. No consequences"],ans:2},
+  {id:146,sec:"gm",src:"Proc. 707 – Crash Investigation",q:"When investigating a motor vehicle crash, what is essential to document?",choices:["A. Driver names only", "B. Nothing special", "C. Scene photos, vehicle damage, witness statements, and vehicle information", "D. Only ticket information"],ans:2},
+  {id:147,sec:"gm",src:"Proc. 707 – Crash Investigation",q:"What should officers photograph at a crash scene?",choices:["A. Only the vehicles", "B. Nothing", "C. Vehicle positions, damage, skid marks, and overall scene", "D. Only the drivers"],ans:2},
+  {id:148,sec:"gm",src:"Proc. 707 – Crash Investigation",q:"When is a written crash report required? (Scenario)",choices:["A. Never", "B. Only for traffic violations", "C. When there is injury, property damage, or death", "D. Only if insurance requests it"],ans:2},
+  {id:149,sec:"gm",src:"Proc. 711 – Hate Crimes",q:"What defines a hate crime?",choices:["A. A crime motivated by bias against protected characteristics", "B. A crime against someone the officer dislikes", "C. Any violent crime", "D. Any serious crime"],ans:0},
+  {id:150,sec:"gm",src:"Proc. 711 – Hate Crimes",q:"What must officers do if they suspect a crime is hate-motivated?",choices:["A. Assume it's not a hate crime", "B. Only investigate the crime", "C. Ignore the bias element", "D. Document and report the bias element"],ans:3},
+  {id:151,sec:"gm",src:"Proc. 713 – Human Trafficking",q:"What should officers do if they encounter indicators of human trafficking?",choices:["A. Report and follow protocol for trafficking investigation", "B. Ignore it", "C. Immediately arrest everyone", "D. Only contact if trafficking is obvious"],ans:0},
+  {id:152,sec:"gm",src:"Proc. 713 – Human Trafficking",q:"What are indicators of human trafficking? (Scenario)",choices:["A. Controlled communication, debt bondage, forced labor, and signs of abuse", "B. Unusual clothing", "C. No indicators", "D. Speaking a foreign language"],ans:0},
+  {id:153,sec:"gm",src:"Proc. 801 – Incident Command System",q:"What is the primary purpose of the Incident Command System?",choices:["A. To organize and manage large-scale incidents", "B. To confuse personnel", "C. To avoid accountability", "D. To make operations more complicated"],ans:0},
+  {id:154,sec:"gm",src:"Proc. 801 – Incident Command System",q:"Who assumes the Incident Commander role?",choices:["A. Always the Chief", "B. Any officer at the scene", "C. The senior ranking officer initially, transferred as needed", "D. The first officer on scene"],ans:2},
+  {id:155,sec:"gm",src:"Proc. 802 – Unusual Occurrences and Critical Incidents",q:"Who must be notified of a critical incident?",choices:["A. Appropriate command staff and support services", "B. Nobody, only file a report", "C. Only the Chief", "D. Only the immediate supervisor"],ans:0},
+  {id:156,sec:"gm",src:"Proc. 802 – Unusual Occurrences and Critical Incidents",q:"What resources may be activated for a critical incident?",choices:["A. None", "B. SWAT, homicide, command staff, and support services", "C. Only dispatch", "D. Just supervisors"],ans:1},
+  {id:157,sec:"gm",src:"Proc. 803 – Bomb Incidents",q:"What is the first response to a suspected bomb incident?",choices:["A. Move the device to a safe location", "B. Ignore it", "C. Evacuate and establish perimeter, contact appropriate units", "D. Examine the device"],ans:2},
+  {id:158,sec:"gm",src:"Proc. 803 – Bomb Incidents",q:"Who should handle a suspected explosive device?",choices:["A. Only bomb disposal experts", "B. Supervisors", "C. The nearest officer", "D. Any officer"],ans:0},
+  {id:159,sec:"gm",src:"Proc. 804 – Crowd Control and Event Management",q:"What must officers do at a permitted public event?",choices:["A. Ignore the crowd", "B. Allow unlimited activity", "C. Manage traffic and ensure public safety", "D. Stop the event"],ans:2},
+  {id:160,sec:"gm",src:"Proc. 804 – Crowd Control and Event Management",q:"When may officers control or disperse a crowd?",choices:["A. Only with union approval", "B. Never", "C. Anytime", "D. When the assembly becomes unlawful or obstructs traffic/property"],ans:3},
+  {id:161,sec:"gm",src:"Proc. 805 – Fallen Aircraft",q:"What actions should officers take at an aircraft crash scene?",choices:["A. Secure the scene and contact emergency management", "B. Access the aircraft immediately", "C. Move debris", "D. Leave the area"],ans:0},
+  {id:162,sec:"gm",src:"Proc. 805 – Fallen Aircraft",q:"Who has jurisdiction at an aircraft crash scene?",choices:["A. SAPD with FAA and other agencies", "B. Only FAA", "C. Only SAPD", "D. Local fire department"],ans:0},
+  {id:163,sec:"gm",src:"Proc. 806 – Mobilization",q:"What is the purpose of a mobilization plan?",choices:["A. To reduce staffing", "B. To prepare for large-scale incidents and personnel deployment", "C. To eliminate overtime", "D. To confuse officers"],ans:1},
+  {id:164,sec:"gm",src:"Proc. 806 – Mobilization",q:"When should a mobilization be activated?",choices:["A. When authorized by command staff for large-scale incidents", "B. Never", "C. Always during emergencies", "D. Only on holidays"],ans:0},
+  {id:165,sec:"gm",src:"Proc. 807 – Terrorism Preparedness",q:"What should officers do if they suspect a terrorism-related incident?",choices:["A. Investigate alone", "B. Contact appropriate law enforcement and agencies", "C. Spread the information on social media", "D. Ignore it"],ans:1},
+  {id:166,sec:"gm",src:"Proc. 807 – Terrorism Preparedness",q:"What indicators should raise suspicion of terrorism? (Scenario)",choices:["A. Surveillance activity, suspicious packages, threats", "B. Speeding", "C. Broken tail light", "D. No indicators"],ans:0},
+  {id:167,sec:"gm",src:"Proc. 809 – Active Shooter Incidents",q:"What is the priority response for an active shooter incident?",choices:["A. Locate and neutralize the threat to protect lives", "B. Wait for SWAT team", "C. Negotiate", "D. Evacuate and leave the scene"],ans:0},
+  {id:168,sec:"gm",src:"Proc. 809 – Active Shooter Incidents",q:"What is the primary objective during an active shooter response? (Scenario)",choices:["A. Interview witnesses", "B. Secure evidence", "C. Establish a perimeter", "D. Stop the threat and protect innocent lives"],ans:3},
+  {id:169,sec:"gm",src:"Proc. 901 – Payroll Timesheets & Overtime Accounting",q:"Who is responsible for accurate timesheet reporting?",choices:["A. Each officer and their supervisor", "B. Dispatch", "C. Payroll department", "D. Human Resources"],ans:0},
+  {id:170,sec:"gm",src:"Proc. 901 – Payroll Timesheets & Overtime Accounting",q:"What must officers do regarding overtime pay?",choices:["A. Report whatever they want", "B. Accurately report hours worked per department policy", "C. Report maximum hours", "D. Not report anything"],ans:1},
+  {id:171,sec:"gm",src:"Proc. 902 – Leave and Absence Policies",q:"What must an officer do to request leave?",choices:["A. Post on social media", "B. Just call in the morning", "C. No request needed", "D. Follow department procedures and obtain supervisory approval"],ans:3},
+  {id:172,sec:"gm",src:"Proc. 902 – Leave and Absence Policies",q:"How many days notice should be given for planned leave?",choices:["A. Department policy requirements", "B. A month in advance", "C. No notice needed", "D. Only 1 hour notice"],ans:0},
+  {id:173,sec:"gm",src:"Proc. 902 – Leave and Absence Policies",q:"How should sick leave absence be reported? (Scenario)",choices:["A. Via email only", "B. At the end of shift", "C. Immediately to supervisor per policy", "D. No need to report"],ans:2},
+  {id:174,sec:"gm",src:"Proc. 903 – Sworn Personnel Transfers",q:"What is the process for requesting a transfer?",choices:["A. Just leave the unit", "B. No request needed", "C. Follow department transfer procedures and approval process", "D. Tell a supervisor verbally"],ans:2},
+  {id:175,sec:"gm",src:"Proc. 903 – Sworn Personnel Transfers",q:"Who must approve a personnel transfer?",choices:["A. Only the officer", "B. Command staff per departmental procedure", "C. Just the supervisor", "D. The union"],ans:1},
+  {id:176,sec:"gm",src:"Proc. 904 – Light Duty Assignment",q:"When might an officer be placed on light duty?",choices:["A. After injury or medical restrictions", "B. At the officer's request only", "C. Only as punishment", "D. Never"],ans:0},
+  {id:177,sec:"gm",src:"Proc. 904 – Light Duty Assignment",q:"What restrictions apply to light duty officers?",choices:["A. No restrictions", "B. No street patrol or dangerous assignments", "C. Same as regular duty", "D. Restrictions only recommended"],ans:1},
+  {id:178,sec:"gm",src:"Proc. 905 – Off-Duty and Outside Employment",q:"When may an officer engage in outside employment?",choices:["A. Anytime", "B. Never", "C. Only during days off", "D. Only when not on limited duty and with department approval"],ans:3},
+  {id:179,sec:"gm",src:"Proc. 905 – Off-Duty and Outside Employment",q:"What must an officer do if returning from sick leave before outside employment?",choices:["A. Complete one regular tour of duty before engaging in outside employment or overtime", "B. Immediately work city overtime", "C. Nothing special", "D. Take additional leave"],ans:0},
+  {id:180,sec:"gm",src:"Proc. 905 – Off-Duty and Outside Employment",q:"May an officer in limited-duty status work city overtime?",choices:["A. Yes, always", "B. Only if they have union approval", "C. Only if the Chief approves", "D. No, except in emergencies"],ans:3},
+  {id:181,sec:"gm",src:"Proc. 905 – Off-Duty and Outside Employment",q:"What may off-duty officers not do regarding traffic enforcement?",choices:["A. Request on-duty officers respond", "B. Make traffic stops", "C. Work traffic details", "D. Contact dispatch"],ans:1},
+  {id:182,sec:"gm",src:"Proc. 905 – Off-Duty and Outside Employment",q:"When can an off-duty officer engaged in DWI enforcement scenario?",choices:["A. Only in cases involving crashes; otherwise contact on-duty officers", "B. Only on weekends", "C. Never", "D. Anytime they see a drunk driver"],ans:0},
+  {id:183,sec:"gm",src:"Proc. 907 – Substitute Employment",q:"What is substitute employment?",choices:["A. Working for another government entity in a non-police capacity", "B. A second job with the city", "C. Patrol work at night", "D. Outside private security work"],ans:0},
+  {id:184,sec:"gm",src:"Proc. 908 – Mandatory Reassignment",q:"Under what circumstances may an officer be mandatorily reassigned?",choices:["A. At their request only", "B. For operational needs or disciplinary reasons", "C. Never", "D. Only with the officer's consent"],ans:1},
+  {id:185,sec:"gm",src:"Proc. 908 – Mandatory Reassignment",q:"Who authorizes a mandatory reassignment?",choices:["A. The union", "B. Command staff per departmental procedure", "C. The officer", "D. The affected supervisor"],ans:1},
+  {id:186,sec:"gm",src:"Proc. 912 – Employee Awards and Ceremonies Program",q:"What is the purpose of the Employee Awards Program?",choices:["A. To be unfair", "B. To punish others", "C. To reward one officer only", "D. To recognize superior performance and service"],ans:3},
+  {id:187,sec:"gm",src:"Proc. 912 – Employee Awards and Ceremonies Program",q:"Who may nominate officers for awards?",choices:["A. Peers, supervisors, and commanders", "B. Only the Chief", "C. Only supervisors", "D. Only the union"],ans:0},
+  {id:188,sec:"gm",src:"Proc. 915 – Family Assistance Program",q:"What services does the Family Assistance Program provide?",choices:["A. Support and resources for officer families during critical incidents", "B. Housing assistance", "C. Legal services only", "D. Financial loans"],ans:0},
+  {id:189,sec:"gm",src:"Proc. 915 – Family Assistance Program",q:"When should the Family Assistance Program be activated? (Scenario)",choices:["A. Never", "B. Only on request", "C. During critical incidents affecting officers and families", "D. Never used"],ans:2},
+  {id:190,sec:"gm",src:"Proc. 916 – Workers Compensation",q:"What must an officer do if injured on-duty?",choices:["A. Ignore it and continue working", "B. File a complaint", "C. Only report if hospitalized", "D. Report the injury and seek medical attention per policy"],ans:3},
+  {id:191,sec:"gm",src:"Proc. 916 – Workers Compensation",q:"Who pays for medical treatment of work-related injuries?",choices:["A. Workers compensation per policy", "B. The city general fund", "C. The union", "D. The officer"],ans:0},
+  {id:192,sec:"gm",src:"Proc. 918 – Discrimination, Harassment, Retaliation",q:"What must be done if an officer observes discrimination or harassment?",choices:["A. Only mention it informally", "B. Wait until the person complains", "C. Report to Internal Affairs within 24 hours per procedure", "D. Say nothing"],ans:2},
+  {id:193,sec:"gm",src:"Proc. 918 – Discrimination, Harassment, Retaliation",q:"What is retaliation in the context of complaints?",choices:["A. Required action", "B. An appropriate response", "C. Discipline only", "D. Adverse action taken against someone for reporting violations"],ans:3},
+  {id:194,sec:"gm",src:"Proc. 921 – Psychological Services",q:"What is the purpose of psychological services for officers?",choices:["A. To monitor officers", "B. To gather evidence against officers", "C. To identify weak officers", "D. To provide mental health support and wellness resources"],ans:3},
+  {id:195,sec:"gm",src:"Proc. 921 – Psychological Services",q:"When should an officer access psychological services? (Scenario)",choices:["A. Only if ordered", "B. When dealing with stress, trauma, or mental health concerns", "C. Never", "D. Only after discipline"],ans:1},
+  {id:196,sec:"gm",src:"Proc. 922 – Reporting of Criminal Offenses by Department Members",q:"What must a member do if arrested or charged with a felony?",choices:["A. Immediately provide written notification to the Chief of Police", "B. Wait until convicted", "C. Only tell their supervisor", "D. Stay silent"],ans:0},
+  {id:197,sec:"gm",src:"Proc. 922 – Reporting of Criminal Offenses by Department Members",q:"What information must be included in criminal offense reporting?",choices:["A. Only the charge", "B. Nothing specific", "C. Victim information", "D. Arresting agency, charge description, and case details"],ans:3},
+  {id:198,sec:"gm",src:"Proc. 923 – Return to Duty(RTD) Program",q:"What is the purpose of the Return to Duty program?",choices:["A. To punish officers", "B. To reduce staffing", "C. To rehabilitate officers and return them to duty when ready", "D. To fire officers"],ans:2},
+  {id:199,sec:"gm",src:"Proc. 923 – Return to Duty(RTD) Program",q:"Who determines RTD program requirements? (Scenario)",choices:["A. The union", "B. The officer alone", "C. Command staff and medical/psychological professionals", "D. Internal Affairs"],ans:2},
+  {id:200,sec:"gm",src:"Proc. 924 – Mandatory Drug Testing Program",q:"When must an officer submit to a drug test?",choices:["A. Only if accused", "B. Only when suspected of drug use", "C. Per policy, which includes random testing", "D. Never"],ans:2},
+  {id:201,sec:"gm",src:"Proc. 924 – Mandatory Drug Testing Program",q:"What happens if an officer refuses to submit to a drug test?",choices:["A. They are let go", "B. It is considered a positive result and disciplinary action follows", "C. They can choose not to", "D. Nothing happens"],ans:1},
+  {id:202,sec:"gm",src:"Proc. 924 – Mandatory Drug Testing Program",q:"When should drug testing occur after an incident? (Scenario)",choices:["A. Never", "B. At the end of shift", "C. Only if requested", "D. Immediately after critical incidents or uses of force"],ans:3},
+  {id:203,sec:"gm",src:"Proc. 200 – Rules and Regulations",q:"An officer receives an unlawful order from a supervisor. What should they do? (Scenario)",choices:["A. Immediately comply", "B. Comply and appeal later", "C. Ignore the supervisor", "D. Report in writing to the Chief of Police through chain-of-command"],ans:3},
+  {id:204,sec:"gm",src:"Proc. 200 – Rules and Regulations",q:"An officer is notified of a disturbance they're involved in that requires law enforcement response. What form should they use for self-reporting? (Scenario)",choices:["A. Any form available", "B. SAPD Form 200-OR", "C. Email notification", "D. Verbal report only"],ans:1},
+  {id:205,sec:"gm",src:"Proc. 303 – Disciplinary Procedures",q:"A Line Complaint investigation is completed within 21 days. The officer disagrees with the findings and recommended discipline. What happens next? (Scenario)",choices:["A. Case is closed", "B. Officer is automatically disciplined", "C. Officer is given 5 more days", "D. If officer disagrees, case goes to Internal Affairs for formal investigation"],ans:3},
+  {id:206,sec:"gm",src:"Proc. 303 – Disciplinary Procedures",q:"A formal complaint involves allegations of excessive force. Citizens must be present for which CARB cases? (Scenario)",choices:["A. Cases involving use of force, bodily injury, unlawful search/seizure", "B. Only serious crimes", "C. Never required", "D. All cases"],ans:0},
+  {id:207,sec:"gm",src:"Proc. 309 – Weapons",q:"An officer carries an unauthorized firearm. What should happen? (Scenario)",choices:["A. Supervisor approval is given", "B. Officer can choose", "C. Nothing", "D. Officer must use department-approved weapon"],ans:3},
+  {id:208,sec:"gm",src:"Proc. 403 – Communications",q:"Dispatch receives an emergency call. What is the appropriate first action? (Scenario)",choices:["A. Screen the call", "B. Determine call type, prioritize, dispatch appropriate units", "C. Send all units immediately", "D. Wait for caller callback"],ans:1},
+  {id:209,sec:"gm",src:"Proc. 501 – Response to Resistance",q:"A suspect is actively resisting a lawful arrest but not being violent. What should occur? (Scenario)",choices:["A. Wait for backup indefinitely", "B. Immediate use of force", "C. Verbal commands, reasonable physical control, de-escalation", "D. Release the suspect"],ans:2},
+  {id:210,sec:"gm",src:"Proc. 501 – Response to Resistance",q:"An officer is about to use force against a non-resistant suspect. What should the officer consider? (Scenario)",choices:["A. Public opinion", "B. Only apprehension", "C. Necessity, alternatives, proportionality, and suspect safety", "D. Officer convenience"],ans:2},
+  {id:211,sec:"gm",src:"Proc. 502 – Warrantless Arrests, Searches, and Seizures",q:"An officer observes a felony being committed in their presence. What authority allows arrest? (Scenario)",choices:["A. Officer's suspicion", "B. Just being nearby", "C. Chief's approval", "D. Witnessing the offense or having probable cause"],ans:3},
+  {id:212,sec:"gm",src:"Proc. 503 – Obtaining a search warrant",q:"An officer believes evidence of a crime is at a residence but doesn't have consent. What is required? (Scenario)",choices:["A. Obtain a search warrant based on probable cause", "B. Wait outside", "C. Just search anyway", "D. Call the owner first"],ans:0},
+  {id:213,sec:"gm",src:"Proc. 506 – Traffic Law Enforcement",q:"An officer stops a vehicle and observes signs of impairment. What should be the next step? (Scenario)",choices:["A. Let them go", "B. Immediately arrest", "C. Request license/insurance, conduct preliminary tests if warranted", "D. Issue a citation"],ans:2},
+  {id:214,sec:"gm",src:"Proc. 507 – DWI Arrests",q:"An officer suspects DWI after a traffic stop. What indicators should be documented? (Scenario)",choices:["A. Speech, balance, odor, driving pattern, appearance", "B. Just suspicion", "C. Only odor", "D. Officer feeling only"],ans:0},
+  {id:215,sec:"gm",src:"Proc. 604 – Family Disturbance/Violence",q:"Officers respond to a family violence call and find the suspect has access to weapons. What action is required? (Scenario)",choices:["A. Leave the weapons", "B. Tell the family to hide them", "C. Secure weapons and ensure scene safety", "D. Only document"],ans:2},
+  {id:216,sec:"gm",src:"Proc. 604 – Family Disturbance/Violence",q:"A victim of family violence refuses to cooperate with police. What should officers do? (Scenario)",choices:["A. Force cooperation", "B. Leave immediately", "C. Offer resources and safety information; document the incident", "D. Arrest the victim"],ans:2},
+  {id:217,sec:"gm",src:"Proc. 620 – Vehicle Pursuit and Stop Techniques",q:"A pursuit is underway for a suspected DWI driver. A supervisor monitoring the pursuit observes increasing risk to the public. What should occur? (Scenario)",choices:["A. Continue indefinitely", "B. Increase speed", "C. Evaluate risk/benefit and consider terminating the pursuit", "D. Do nothing"],ans:2},
+  {id:218,sec:"gm",src:"Proc. 701 – Crime Scene Duties",q:"An officer discovers what appears to be evidence at a crime scene. What is the proper procedure? (Scenario)",choices:["A. Photograph, document location, maintain chain of custody when collected", "B. Move it for safety", "C. Leave it untouched", "D. Pick it up and bag it"],ans:0},
+  {id:219,sec:"gm",src:"Proc. 701 – Crime Scene Duties",q:"Multiple officers are at a crime scene. Who may enter the secured area? (Scenario)",choices:["A. Anyone with a badge", "B. Only those authorized and documented for the investigation", "C. The public if asking nicely", "D. Any supervisor"],ans:1},
+  {id:220,sec:"gm",src:"Proc. 702 – Eyewitness Identification",q:"An eyewitness to a crime is brought in to identify a suspect from a photo array. What must be avoided? (Scenario)",choices:["A. Documentation", "B. Showing only one photo", "C. Having the witness look at photos", "D. Suggestive comments about the suspect's location or appearance"],ans:3},
+  {id:221,sec:"gm",src:"Proc. 705 – Officer Involved Shooting and Custodial Deaths",q:"An officer discharges their weapon at a suspect. What is the immediate requirement? (Scenario)",choices:["A. Continue patrol", "B. Notify supervisory personnel and follow OIS procedures", "C. Clean the weapon", "D. Interview witnesses only"],ans:1},
+  {id:222,sec:"gm",src:"Proc. 809 – Active Shooter Incidents",q:"Officers arrive at a location with an active shooter. What is the priority response? (Scenario)",choices:["A. Locate and stop the threat to protect lives", "B. Establish a perimeter", "C. Evacuate all civilians first", "D. Wait for SWAT"],ans:0},
+  {id:223,sec:"gm",src:"Proc. 905 – Off-Duty and Outside Employment",q:"An officer calls in sick for a day, then works private security that evening. What is the issue? (Scenario)",choices:["A. Nothing wrong", "B. Potential misuse of sick leave; medical restrictions apply", "C. Officer gets extra income", "D. Normal practice"],ans:1},
+  {id:224,sec:"gm",src:"Proc. 905 – Off-Duty and Outside Employment",q:"An off-duty officer observes a DWI suspect. What should the officer do? (Scenario)",choices:["A. Follow until an on-duty officer arrives", "B. Stop the vehicle immediately", "C. Contact dispatch and request an on-duty officer", "D. Do nothing"],ans:2},
+  {id:225,sec:"gm",src:"Proc. 918 – Discrimination, Harassment, Retaliation",q:"A supervisor observes what appears to be discriminatory behavior by another officer. What action must be taken? (Scenario)",choices:["A. Say nothing", "B. Tell the officer privately", "C. Report to Internal Affairs within 24 hours", "D. Document only"],ans:2},
+  {id:226,sec:"gm",src:"Proc. 924 – Mandatory Drug Testing Program",q:"An officer involved in a critical incident involving use of force must submit to drug testing. When? (Scenario)",choices:["A. At the officer's convenience", "B. Immediately after the incident", "C. Within a week", "D. Only if ordered"],ans:1},
+  {id:227,sec:"gm",src:"Proc. 303 – Disciplinary Procedures",q:"What types of cases are presented to CARB? (Scenario)",choices:["A. Minor infractions", "B. Traffic violations only", "C. Internal Affairs formal complaints and Chief-referred cases", "D. All complaints"],ans:2},
+  {id:228,sec:"gm",src:"Proc. 200 – Rules and Regulations",q:"What must happen when a member reports to their supervisor about receiving an unlawful order? (Scenario)",choices:["A. Order is automatically voided", "B. Report is ignored", "C. Conflict is documented and escalated through chain-of-command", "D. Officer is disciplined"],ans:2},
+  {id:229,sec:"gm",src:"Proc. 403 – Communications",q:"An officer is on a high-priority call. Dispatch radios a new emergency call. What should occur? (Scenario)",choices:["A. Abandon current call", "B. Officer ignores dispatcher", "C. Ignore dispatch", "D. Officer's supervisor responds while officer stays on high-priority"],ans:3},
+  {id:230,sec:"gm",src:"Proc. 410 – Body Worn Cameras(BWC)",q:"When an officer's BWC malfunctions during a call, what must the officer do? (Scenario)",choices:["A. Continue as if nothing happened", "B. Leave the scene", "C. Ignore and continue", "D. Notify supervisor and document the malfunction"],ans:3},
+  {id:231,sec:"gm",src:"Proc. 620 – Vehicle Pursuit and Stop Techniques",q:"During a vehicle pursuit, the suspect driver causes a traffic accident injuring innocent parties. What should occur? (Scenario)",choices:["A. Continue pursuit", "B. Ignore the accident", "C. Send only one unit", "D. Supervisor may terminate pursuit to address immediate danger"],ans:3},
+  {id:232,sec:"gm",src:"Proc. 103 – Law Enforcement Code of Ethics",q:"According to the Law Enforcement Code of Ethics, an officer's private life must be kept in what manner?",choices:["A. Unsullied, as an example to all", "B. Subject to departmental oversight only", "C. Disclosed in annual performance evaluations", "D. Completely separate from professional duties"],ans:0},
+  {id:233,sec:"gm",src:"Proc. 103 – Law Enforcement Code of Ethics",q:"The Law Enforcement Code of Ethics states an officer shall never act officiously or permit personal feelings to do which of the following?",choices:["A. Override use-of-force policy", "B. Influence decisions or limit their efficiency", "C. Prevent an officer from reporting violations", "D. Affect conduct while off duty only"],ans:1},
+  {id:234,sec:"gm",src:"Proc. 103 – Law Enforcement Code of Ethics",q:"Which of the following actions best reflects the Law Enforcement Code of Ethics?",choices:["A. Accepting a gratuity from a grateful store owner", "B. Using personal judgment to selectively enforce laws", "C. Maintaining courageous calm in the face of danger", "D. Sharing case information with the media to build goodwill"],ans:2},
+  {id:235,sec:"gm",src:"Proc. 104 – Vision",q:"SAPD's Vision is best described as creating what in the community?",choices:["A. A department-driven standard of policing excellence", "B. A zero-crime environment through saturation patrol", "C. A centralized command structure with enhanced response times", "D. A safe environment through community partnership"],ans:3},
+  {id:236,sec:"gm",src:"Proc. 105 – Mission",q:"SAPD's Mission Statement's primary goal is to enhance the quality of life by:",choices:["A. Creating a safe environment in partnership with the community", "B. Reducing response times to below the national average", "C. Expanding officer presence in high-crime districts", "D. Maximizing the number of arrests per shift"],ans:0},
+  {id:237,sec:"gm",src:"Proc. 105 – Mission",q:"Which of the following is NOT consistent with the SAPD Mission?",choices:["A. Creating a safe environment", "B. Maximizing enforcement activity regardless of context", "C. Partnering with the community", "D. Enhancing quality of life"],ans:1},
+  {id:238,sec:"gm",src:"Proc. 106 – Guiding Principles",q:"Which of the following is NOT one of SAPD's four Guiding Principles?",choices:["A. Respect", "B. Fairness", "C. Accountability", "D. Integrity"],ans:2},
+  {id:239,sec:"gm",src:"Proc. 106 – Guiding Principles",q:"SAPD's four official Guiding Principles are:",choices:["A. Integrity, Courage, Compassion, Fairness", "B. Honesty, Respect, Loyalty, Fairness", "C. Professionalism, Respect, Compassion, Justice", "D. Integrity, Respect, Compassion, Fairness"],ans:3},
+  {id:240,sec:"gm",src:"Proc. 106 – Guiding Principles",q:"A Sergeant who disciplines both a junior and senior officer equally for the same violation is best demonstrating which Guiding Principle?",choices:["A. Fairness", "B. Respect", "C. Integrity", "D. Compassion"],ans:0},
+  {id:241,sec:"gm",src:"Proc. 106 – Guiding Principles",q:"An officer who admits a procedural mistake rather than concealing it best demonstrates which Guiding Principle?",choices:["A. Fairness", "B. Integrity", "C. Respect", "D. Compassion"],ans:1},
+  {id:242,sec:"pc",src:"PC §9.02 – Justification: Public Duty",q:"Under the Texas Penal Code, justification is defined as:",choices:["A. A complete immunity from all civil and criminal liability", "B. A mitigating factor that reduces a charge but does not constitute a defense", "C. An affirmative defense available only to peace officers", "D. A defense to prosecution when conduct is justified under Chapter 9"],ans:3},
+  {id:243,sec:"pc",src:"PC §9.31 – Justification: Self-Defense",q:"The use of force in self-defense is NOT justified when it is used:",choices:["A. To protect one's occupied habitation from unlawful entry", "B. To protect against the use or attempted use of unlawful force", "C. In response to verbal provocation alone", "D. When the actor is not otherwise engaged in criminal activity"],ans:2},
+  {id:244,sec:"pc",src:"PC §9.32 – Justification: Deadly Force in Self-Defense",q:"A person is justified in using deadly force when they reasonably believe it is immediately necessary to prevent the commission of which offense?",choices:["A. Aggravated kidnapping, murder, sexual assault, aggravated sexual assault, robbery, or aggravated robbery", "B. Any felony offense", "C. Any crime against a person", "D. Burglary only"],ans:0},
+  {id:245,sec:"pc",src:"PC §9.33 – Justification: Defense of Third Person",q:"Defense of a third person is justified when:",choices:["A. The actor is employed in a law enforcement capacity", "B. The third person formally requests assistance from the actor", "C. Only a peace officer can use force to defend third persons", "D. The actor would be justified under Section 9.31 or 9.32 in using force to protect himself under similar circumstances"],ans:3},
+  {id:246,sec:"pc",src:"PC §9.51 – Justification: Protection of Life (LEO)",q:"A peace officer is justified in using force to make an arrest when:",choices:["A. The officer believes an arrest is needed for any reason", "B. The suspect is a known felon with active warrants", "C. The force is immediately necessary, the officer identifies themselves, and the arrest is believed to be lawful", "D. Only non-deadly force options are used"],ans:2},
+  {id:247,sec:"pc",src:"PC §9.52 – Justification: Arrest & Search",q:"A peace officer at a correctional facility is justified in using any force, including deadly force, to prevent:",choices:["A. Any rule violation within the facility", "B. Verbal confrontations between inmates", "C. The escape of a person from a correctional facility", "D. Any unauthorized movement within the facility"],ans:2},
+  {id:248,sec:"pc",src:"PC §19.01 – Criminal Homicide (Definitions)",q:"Criminal homicide includes which of the following?",choices:["A. Murder, capital murder, manslaughter, and criminally negligent homicide", "B. Intentional killing and reckless endangerment", "C. Only premeditated, intentional killings", "D. Murder and capital murder only"],ans:0},
+  {id:249,sec:"pc",src:"PC §19.02 – Murder",q:"A person commits murder under Section 19.02 when:",choices:["A. Recklessly causes the death of another individual", "B. Intentionally or knowingly causes the death of an individual, or intends to cause serious bodily injury and commits an act clearly dangerous to human life", "C. Only commits premeditated and deliberate killing", "D. Causes the death of another by criminal negligence"],ans:1},
+  {id:250,sec:"pc",src:"PC §19.04 – Manslaughter",q:"Manslaughter under Section 19.04 is committed when a person:",choices:["A. Negligently causes the death of another", "B. Recklessly causes the death of an individual", "C. Causes death while committing a felony", "D. Intentionally causes the death of another"],ans:1},
+  {id:251,sec:"pc",src:"PC §19.05 – Criminally Negligent Homicide",q:"Criminally Negligent Homicide under Section 19.05 is classified as:",choices:["A. A felony of the first degree", "B. A felony of the second degree", "C. A Class A misdemeanor", "D. A state jail felony"],ans:3},
+  {id:252,sec:"pc",src:"PC §20.02 – Kidnapping",q:"Unlawful Restraint under Section 20.02(a) is committed when a person:",choices:["A. Intentionally or knowingly restrains another person", "B. Follows another person without their knowledge", "C. Threatens to restrain another person", "D. Recklessly causes another person to feel confined"],ans:0},
+  {id:253,sec:"pc",src:"PC §20.03 – Unlawful Restraint",q:"Kidnapping under Section 20.03 is committed when a person:",choices:["A. Follows another person against their will", "B. Intentionally or knowingly abducts another person", "C. Unlawfully restrains another person by words alone", "D. Threatens to use force against another person"],ans:1},
+  {id:254,sec:"pc",src:"PC §20.04 – Smuggling of Persons",q:"Aggravated Kidnapping under Section 20.04 is committed when a person intentionally or knowingly abducts another person with intent to:",choices:["A. Hold the person for ransom or reward, use as a shield or hostage, facilitate a felony, inflict bodily injury, terrorize, or interfere with a governmental function", "B. Detain the person temporarily", "C. Question the person about a crime", "D. Prevent the person from testifying"],ans:0},
+  {id:255,sec:"pc",src:"PC §20A.02 – Trafficking of Persons",q:"Under Section 20A.02, Trafficking of Persons involves which of the following?",choices:["A. Employing undocumented workers knowingly", "B. Hiring workers without proper documentation", "C. Only transporting persons across state lines", "D. Knowingly trafficking another person with intent that they engage in forced labor or services, or trafficking through force, fraud, or coercion into prohibited conduct"],ans:3},
+  {id:256,sec:"pc",src:"PC §20A.01 – Trafficking: Definitions",q:"Under Chapter 20A, 'Traffic' means to:",choices:["A. Move a person by vehicle only", "B. Transfer legal custody of a person", "C. Transport goods across state lines", "D. Transport, entice, recruit, harbor, provide, or otherwise obtain another person by any means"],ans:3},
+  {id:257,sec:"pc",src:"PC §21.11 – Indecency with a Child",q:"Indecency with a Child under Section 21.11 is committed if a person engages in sexual contact with a child younger than what age?",choices:["A. 15 years of age", "B. 17 years of age", "C. 18 years of age", "D. 16 years of age"],ans:1},
+  {id:258,sec:"pc",src:"PC §21.08 – Indecent Exposure",q:"Indecent Exposure under Section 21.08 is committed when a person exposes their genitals or anus with intent to arouse or gratify sexual desire, and is reckless about whether another is present who will be offended. What is the base classification of this offense?",choices:["A. Class C misdemeanor", "B. Class B misdemeanor", "C. State jail felony", "D. Class A misdemeanor"],ans:1},
+  {id:259,sec:"pc",src:"PC §21.07 – Public Lewdness",q:"Public Lewdness under Section 21.07 is committed when a person knowingly engages in an act of sexual intercourse, deviate sexual intercourse, or sexual contact in a public place. It is classified as:",choices:["A. A Class A misdemeanor", "B. A Class B misdemeanor", "C. A state jail felony", "D. A Class C misdemeanor"],ans:0},
+  {id:260,sec:"pc",src:"PC §22.01 – Assault",q:"Under Section 22.01(a), Assault is committed when a person intentionally, knowingly, or recklessly causes bodily injury; intentionally or knowingly threatens another with imminent bodily injury; or:",choices:["A. Uses threatening language", "B. Intentionally or knowingly causes physical contact that the person knows or should know will be regarded as offensive or provocative", "C. Touches another person accidentally", "D. Follows another person"],ans:1},
+  {id:261,sec:"pc",src:"PC §22.011 – Sexual Assault",q:"Under Section 22.011(b), a sexual assault is considered to be without the consent of the other person if the actor compels the other person to submit by threatening to use force or violence and the other person believes the actor has the present ability to execute the threat. A 'child' for this offense means a person younger than:",choices:["A. 17 years", "B. 18 years", "C. 16 years", "D. 15 years"],ans:0},
+  {id:262,sec:"pc",src:"PC §22.021 – Aggravated Sexual Assault",q:"Aggravated Sexual Assault under Section 22.021(a) is committed when a person commits sexual assault AND:",choices:["A. Fails to obtain written consent", "B. Uses threatening language against the victim", "C. Causes serious bodily injury to another, or uses or exhibits a deadly weapon during the commission of the assault", "D. Takes property belonging to the victim"],ans:2},
+  {id:263,sec:"pc",src:"PC §22.01 – Assault",q:"Under Section 22.01(b), Assault causing bodily injury is a Class A misdemeanor except when it is committed against a public servant lawfully discharging an official duty or in retaliation, in which case it becomes a:",choices:["A. State jail felony", "B. Felony of the third degree", "C. Felony of the second degree", "D. Felony of the first degree"],ans:1},
+  {id:264,sec:"pc",src:"PC §25.03 – Interference with Child Custody",q:"Under Section 25.03(a)(1), Interference with Child Custody occurs when a person takes or retains a child younger than 18 when the person knows that the taking or retention:",choices:["A. Is in the child's best interest", "B. Is consented to by the other parent", "C. Is temporary in nature", "D. Violates the express terms of a judgment or order of a court"],ans:3},
+  {id:265,sec:"pc",src:"PC §25.05 – Criminal Nonsupport",q:"Criminal Nonsupport under Section 25.05(a) is committed when an individual intentionally or knowingly fails to provide support for:",choices:["A. Their child younger than 18 years of age or subject to a court order requiring support", "B. Extended family members", "C. Any dependent family member", "D. Any person living in their household"],ans:0},
+  {id:266,sec:"pc",src:"PC §25.01 – Bigamy",q:"For purposes of Bigamy under Section 25.01, 'under the appearance of being married' means holding out that the parties are married with cohabitation and an intent to be married by either party. Bigamy is classified as a:",choices:["A. Felony of the second degree", "B. Felony of the third degree", "C. Class A misdemeanor", "D. State jail felony"],ans:3},
+  {id:267,sec:"pc",src:"PC §28.01 – Arson & Mischief: Definitions",q:"Under Section 28.01, 'habitation' for purposes of Arson and related offenses means:",choices:["A. Any structure with a lock on the door", "B. Only permanent residential structures", "C. Any building intended for commercial use", "D. A structure or vehicle adapted for overnight accommodation, including each separately secured or occupied portion"],ans:3},
+  {id:268,sec:"pc",src:"PC §28.02 – Arson",q:"Under Section 28.02(a), a person commits Arson if the person starts a fire or causes an explosion with intent to destroy or damage any building, habitation, or vehicle when:",choices:["A. The structure is unoccupied", "B. Any of the specified conditions exist, such as knowing it is within limits of an incorporated city, insured against damage, or subject to a mortgage", "C. The damage is intentional", "D. The fire spreads beyond the intended target"],ans:1},
+  {id:269,sec:"pc",src:"PC §28.03 – Criminal Mischief",q:"Under Section 28.03(a), Criminal Mischief is committed if a person, without effective consent of the owner:",choices:["A. Reports damage to the owner's property", "B. Looks at the owner's tangible property with intent to damage it", "C. Intentionally or knowingly damages, destroys, tampers with, or makes markings on the tangible property of the owner", "D. Enters the owner's property without permission"],ans:2},
+  {id:270,sec:"pc",src:"PC §29.01 – Robbery: Definitions",q:"Under Section 29.01, 'in the course of committing theft' means conduct that occurs:",choices:["A. In an attempt to commit, during the commission, or in immediate flight after the attempt or commission of theft", "B. Within one hour of a theft", "C. Only while actually taking property", "D. Anywhere on the victim's property"],ans:0},
+  {id:271,sec:"pc",src:"PC §29.02 – Robbery",q:"Robbery under Section 29.02(a) is committed if a person, in the course of committing theft, with intent to obtain or maintain control of the property:",choices:["A. Damages the victim's property", "B. Intentionally or knowingly causes bodily injury OR intentionally or knowingly threatens or places another in fear of imminent bodily injury or death", "C. Flees the scene of the theft", "D. Possesses a weapon"],ans:1},
+  {id:272,sec:"pc",src:"PC §29.03 – Aggravated Robbery",q:"Aggravated Robbery under Section 29.03(a) is committed when a person commits robbery and:",choices:["A. Commits the offense at night", "B. Threatens to harm the victim's family", "C. Takes money from the victim", "D. Causes serious bodily injury to another, uses or exhibits a deadly weapon, OR causes bodily injury to protected persons such as those 65 or older or disabled persons"],ans:3},
+  {id:273,sec:"pc",src:"PC §30.02 – Burglary",q:"Burglary under Section 30.02(a) is committed if a person, without the effective consent of the owner, intentionally or knowingly enters a habitation or building with intent to:",choices:["A. Observe the interior of the building", "B. Trespass on the property", "C. Commit theft, a felony, or an assault", "D. Look for unlocked doors"],ans:2},
+  {id:274,sec:"pc",src:"PC §30.01 – Burglary: Definitions",q:"Under Section 30.01, 'habitation' for purposes of Burglary means:",choices:["A. A structure or vehicle adapted for overnight accommodation of persons, including each separately secured or occupied portion", "B. Any enclosed space", "C. Structures used only during the day", "D. Only single-family dwellings"],ans:0},
+  {id:275,sec:"pc",src:"PC §30.04 – Criminal Trespass",q:"Burglary of Vehicles under Section 30.04(a) is committed if a person, without the effective consent of the owner, intentionally or knowingly breaks into or enters a vehicle with intent to:",choices:["A. Sit in the vehicle", "B. Commit theft, a felony, or an assault", "C. Damage the vehicle", "D. Use the vehicle's parking space"],ans:1},
+  {id:276,sec:"pc",src:"PC §31.01 – Theft: Definitions",q:"Under Section 31.01(1)(A), 'Deception' includes creating or confirming a false impression of law or fact that is likely to affect the judgment of another when:",choices:["A. The actor believes the impression is true", "B. The actor is nervous about the transaction", "C. The victim should have known better", "D. The actor does not believe the impression to be true"],ans:3},
+  {id:277,sec:"pc",src:"PC §31.01 – Theft: Definitions",q:"Under Section 31.01(2), 'Deprive' means to:",choices:["A. Prevent the owner from knowing about the property", "B. Withhold property permanently or for so extended a period that a major portion of the value or enjoyment is lost, OR restore only upon payment, OR dispose in a manner making recovery unlikely", "C. Take property without asking permission", "D. Use someone else's property temporarily"],ans:1},
+  {id:278,sec:"pc",src:"PC §31.03 – Theft",q:"Theft under Section 31.03 is committed if a person with intent to deprive the owner of property appropriates property when the person:",choices:["A. Believes they can return it later", "B. Takes property worth more than $100", "C. Knows the property belongs to another", "D. Has no legal right to the property"],ans:2},
+  {id:279,sec:"pc",src:"PC §38.01 – Obstructing Government: Definitions",q:"Under Section 38.01(1), 'Custody' includes being:",choices:["A. In temporary possession by a business", "B. In a private security officer's care", "C. Under arrest by a peace officer or under restraint by a public servant pursuant to an order of a court", "D. Voluntarily in someone's company"],ans:2},
+  {id:280,sec:"pc",src:"PC §38.02 – Escape",q:"Failure to Identify under Section 38.02(a) is committed when a person intentionally refuses to provide a peace officer with:",choices:["A. Information the officer requests about the person's identity, when the officer has lawful authority to demand the information", "B. Personal financial information", "C. Information about other people", "D. An explanation for their conduct"],ans:0},
+  {id:281,sec:"pc",src:"PC §38.06 – Evading Arrest or Detention",q:"Escape under Section 38.06(a) is committed when a person in custody:",choices:["A. Requests to speak with an attorney", "B. Leaves the facility to get medical attention", "C. Engages in unauthorized departure from custody or fails to return to custody following temporary leave for a specific purpose or limited period", "D. Refuses to follow directions"],ans:2},
+  {id:282,sec:"pc",src:"PC §39.02 – Official Oppression",q:"Abuse of Official Capacity under Section 39.02(a) is committed when a public servant acting under color of office, with intent to benefit themselves or another or harm another:",choices:["A. Enforces the law strictly", "B. Investigates a crime", "C. Makes an arrest", "D. Recklessly engages in conduct that violates an established duty of office"],ans:3},
+  {id:283,sec:"pc",src:"PC §39.03 – Violation of Civil Rights of Person in Custody",q:"Official Oppression under Section 39.03(a) is committed by a public servant acting under color of office who with intent to gain a benefit or harm another:",choices:["A. Intentionally subjects another to mistreatment, deprivation of rights, or other abuse", "B. Conducts an investigation", "C. Maintains order in their jurisdiction", "D. Fulfills their assigned duties"],ans:0},
+  {id:284,sec:"pc",src:"PC §39.01 – Abuse of Office: Definitions",q:"Under Chapter 39, 'Custody' for purposes of Abuse of Office means:",choices:["A. Any involuntary contact with police", "B. Only detention in a police station", "C. Under arrest by a peace officer or under restraint by a public servant pursuant to an order of a court of this state or another state", "D. Temporary questioning by law enforcement"],ans:2},
+  {id:285,sec:"pc",src:"PC §42.01 – Disorderly Conduct",q:"Under Section 42.01(a), Disorderly Conduct is committed when a person intentionally or knowingly:",choices:["A. Speaks loudly in public", "B. Refuses to cooperate with police", "C. Is present at a location where others are misbehaving", "D. Engages in fighting, uses abusive language, makes an unreasonable noise, or exposes themselves in a public place, among other conduct"],ans:3},
+  {id:286,sec:"pc",src:"PC §42.02 – Riot",q:"Under Section 42.02, Riot requires how many or more persons acting together with a common intent resulting in injury or damage?",choices:["A. Two or more", "B. Three or more", "C. Ten or more", "D. Five or more"],ans:1},
+  {id:287,sec:"pc",src:"PC §42.07 – Harassment",q:"Harassment under Section 42.07(a) is committed if a person, with intent to harass, annoy, alarm, abuse, threaten, or offend another, initiates repeated or continuing communications or makes a remark intended to be overheard that in a reckless manner causes offense. The manner of communication:",choices:["A. Must be written only", "B. Must be in person only", "C. Can include telephone, electronic communications, or any other means", "D. Must be witnessed by a third party"],ans:2},
+  {id:288,sec:"pc",src:"PC §49.01 – Intoxication: Definitions",q:"Under Section 49.01(1), 'Intoxication' means the state of a person whose physical or mental faculties are:",choices:["A. Materially or significantly impaired by the introduction of alcohol, a controlled substance, a dangerous drug, a combination of those substances, or any other substance into the body", "B. Somewhat altered", "C. Slightly affected by any substance", "D. Changed in any way"],ans:0},
+  {id:289,sec:"pc",src:"PC §49.02 – DWI",q:"Public Intoxication under Section 49.02(a) is committed when a person appears in public while intoxicated to the degree that the person may endanger:",choices:["A. Anyone within 100 feet", "B. Themselves or another", "C. Themselves or nearby property", "D. Someone who might be nearby"],ans:1},
+  {id:290,sec:"pc",src:"PC §9.04 – Justification: Mistake of Fact",q:"Under Section 9.04, a threat of force is justified under the same circumstances as the use of force, as long as the actor's purpose is limited to creating an apprehension that the actor will use deadly force if necessary. This threat:",choices:["A. Must be verbal only", "B. Requires a weapon to be present", "C. Does NOT constitute the use of deadly force", "D. Constitutes the use of deadly force"],ans:2},
+  {id:291,sec:"pc",src:"PC §9.53 – Justification: Prevention of Escape",q:"Under Section 9.53, an officer or employee of a correctional facility is justified in using force against a person in custody when the force is necessary to:",choices:["A. Maintain the security of the facility, the safety of other persons in custody or employed by the facility, or the officer's own safety", "B. Punish rule violators", "C. Process inmates", "D. Conduct interrogations"],ans:0},
+  {id:292,sec:"pc",src:"PC §31.02 – Theft of Service",q:"Under §31.02, theft of service is committed when a person secures a service by deception, threat, or false token with intent to:",choices:["A. Avoid payment the person knows is expected", "B. Obtain a better quality service", "C. Transfer the service to another", "D. Resell the service at a profit"],ans:0},
+  {id:293,sec:"pc",src:"PC §31.07 – Unauthorized Use of a Vehicle",q:"Under §31.07, which of the following best describes what makes unauthorized use of a vehicle an offense?",choices:["A. Operating a vehicle while intoxicated without the owner's knowledge", "B. Intentionally operating another's vehicle without the effective consent of the owner", "C. Operating a vehicle with an expired inspection sticker", "D. Borrowing a vehicle and failing to return it within 24 hours"],ans:1},
+  {id:294,sec:"pc",src:"PC §31.11 – Tampering with Identification Numbers",q:"Under §31.11, which of the following acts constitutes an offense?",choices:["A. Reporting a VIN as stolen when it is not", "B. Replacing a worn VIN plate with an identical duplicate", "C. Removing, altering, or obliterating a vehicle identification number with intent to deceive", "D. Covering a VIN temporarily during a restoration project"],ans:2},
+  {id:295,sec:"pc",src:"PC §38.03 – Resisting Arrest",q:"Under §38.03, resisting arrest requires that the person use force against the officer. Which of the following would NOT constitute resisting arrest under this section?",choices:["A. Pulling away from an officer's grip", "B. Kicking toward an officer during transport", "C. Pushing an officer who is handcuffing the person", "D. Verbally arguing about the arrest being unlawful"],ans:3},
+  {id:296,sec:"pc",src:"PC §38.05 – Hindering Apprehension",q:"Under §38.05, hindering apprehension includes providing false information to a peace officer to help a suspect avoid arrest. What level of offense does this become if the underlying crime is a felony?",choices:["A. Third Degree Felony", "B. State Jail Felony", "C. Second Degree Felony", "D. Class A Misdemeanor"],ans:0},
+  {id:297,sec:"pc",src:"PC §38.14 – Taking Weapon from Peace Officer",q:"Under §38.14, which best describes when it is an offense to take or attempt to take a firearm from a peace officer?",choices:["A. Only when the officer is in a marked patrol vehicle", "B. While the officer is lawfully discharging an official duty", "C. Only during a felony arrest", "D. At any time, whether the officer is on or off duty"],ans:1},
+  {id:298,sec:"pc",src:"PC §42.03 – Obstructing Highway",q:"Under §42.03, which of the following acts would constitute obstructing a highway or passageway?",choices:["A. Standing on a sidewalk watching a parade", "B. Temporarily stopping at a crosswalk", "C. Intentionally refusing to move when lawfully ordered by a peace officer", "D. Slowing down while driving through a construction zone"],ans:2},
+  {id:299,sec:"pc",src:"PC §42.062 – Interference with Emergency Request",q:"Under §42.062, a person commits an offense by intentionally preventing someone from requesting emergency assistance from:",choices:["A. Any service listed in the local phone directory", "B. Only 9-1-1 dispatch", "C. Any government agency", "D. Police, fire, or medical services"],ans:3},
+  {id:300,sec:"pc",src:"PC §42.072 – Stalking",q:"Under §42.072, for conduct to constitute stalking it must occur on more than one occasion AND cause the victim to:",choices:["A. Fear bodily injury or death to themselves or a family member", "B. Change their employment or residence", "C. File a protective order", "D. Feel uncomfortable in public places"],ans:0},
+  {id:301,sec:"pc",src:"PC §49.031 – Open Container",q:"Under §49.031, possession of an open container of alcohol is an offense when the vehicle is located where?",choices:["A. Within 1,000 feet of a school", "B. On a public highway", "C. Any location, including private driveways", "D. Inside city limits only"],ans:1},
+  {id:302,sec:"pc",src:"PC §49.045 – DWI with Child Passenger",q:"Under §49.045, DWI with a child passenger is a State Jail Felony when the passenger is under what age?",choices:["A. Under 18", "B. Under 14", "C. Under 15", "D. Under 16"],ans:2},
+  {id:303,sec:"pc",src:"PC §49.07 – Intoxication Assault",q:"Under §49.07, intoxication assault results from operating a vehicle while intoxicated and causing serious bodily injury by accident or mistake. This offense is classified as a:",choices:["A. State Jail Felony", "B. Class A Misdemeanor", "C. Second Degree Felony", "D. Third Degree Felony"],ans:3},
+  {id:304,sec:"pc",src:"PC §49.08 – Intoxication Manslaughter",q:"Under §49.08, intoxication manslaughter differs from intoxication assault in that it requires:",choices:["A. Death of another person caused by accident or mistake while intoxicated", "B. Serious bodily injury rather than death", "C. Intent to kill", "D. Prior DWI convictions"],ans:0},
+  {id:305,sec:"tb",src:"Textbook Ch. 1 – The Evolution of Police Administration",q:"In what year was the Military Model of policing formally implemented as the primary organizational structure for American police departments?",choices:["A. 1917", "B. 1930", "C. 1924", "D. 1920"],ans:2},
+  {id:306,sec:"tb",src:"Textbook Ch. 1 – The Evolution of Police Administration",q:"General Smedley Butler was hired by which major U.S. city to reform its police department in 1924-1925?",choices:["A. Boston", "B. Chicago", "C. Philadelphia", "D. New York"],ans:1},
+  {id:307,sec:"tb",src:"Textbook Ch. 1 – The Evolution of Police Administration",q:"What was the primary purpose of the Wickersham Commission established in 1931?",choices:["A. To examine police practices and crime prevention", "B. To regulate interstate commerce", "C. To investigate organized crime syndicates", "D. To establish federal police authority"],ans:0},
+  {id:308,sec:"tb",src:"Textbook Ch. 1 – The Evolution of Police Administration",q:"In what year was Prohibition ratified in the United States, creating increased demand for policing resources?",choices:["A. 1919", "B. 1917", "C. 1921", "D. 1925"],ans:0},
+  {id:309,sec:"tb",src:"Textbook Ch. 1 – The Evolution of Police Administration",q:"The FBI Academy was established in which year to professionalize federal law enforcement training?",choices:["A. 1930", "B. 1932", "C. 1936", "D. 1934"],ans:3},
+  {id:310,sec:"tb",src:"Textbook Ch. 1 – The Evolution of Police Administration",q:"Which movement during the late 1800s and early 1900s advocated for government control over alcohol distribution and temperance?",choices:["A. The Conservation Movement", "B. The Labor Movement", "C. The Temperance Movement", "D. The Abolition Movement"],ans:2},
+  {id:311,sec:"tb",src:"Textbook Ch. 1 – The Evolution of Police Administration",q:"What was a speakeasy during the Prohibition era?",choices:["A. A federal enforcement office", "B. A legitimate liquor store operated by the government", "C. An illegal establishment selling alcohol and often featuring live entertainment", "D. A public gathering space for temperance advocates"],ans:2},
+  {id:312,sec:"tb",src:"Textbook Ch. 1 – The Evolution of Police Administration",q:"Which of the following best describes the primary characteristic of the Professional Movement in policing?",choices:["A. Decentralization of authority to individual officers", "B. Emphasis on military-style hierarchy, standardization, and scientific management", "C. Elimination of specialized units", "D. Community-based decision making in police operations"],ans:1},
+  {id:313,sec:"tb",src:"Textbook Ch. 1 – The Evolution of Police Administration",q:"During the Prohibition era, individuals who illegally manufactured or sold alcohol were known as:",choices:["A. Bootleggers", "B. Moonshiners", "C. Speakeasy operators", "D. Prohibition agents"],ans:0},
+  {id:314,sec:"tb",src:"Textbook Ch. 1 – The Evolution of Police Administration",q:"What significant event occurred in American policing during the 1970s that challenged the professional model?",choices:["A. The professionalization of detective units", "B. The creation of federal police academies", "C. Widespread civil unrest and calls for police reform", "D. The establishment of community policing strategies"],ans:2},
+  {id:315,sec:"tb",src:"Textbook Ch. 2 – Policing Today",q:"Intelligence-led policing emphasizes which of the following as its primary focus?",choices:["A. Increasing enforcement activities", "B. Community engagement activities", "C. Reactive response to calls for service", "D. The use of data analysis to guide operational decisions"],ans:3},
+  {id:316,sec:"tb",src:"Textbook Ch. 2 – Policing Today",q:"Predictive policing uses historical data and algorithms to accomplish which goal?",choices:["A. Identify police officer misconduct patterns", "B. Forecast areas and times where crimes are likely to occur", "C. Evaluate community satisfaction with police services", "D. Predict future criminal behavior of individual offenders"],ans:1},
+  {id:317,sec:"tb",src:"Textbook Ch. 2 – Policing Today",q:"Body-worn cameras have become prevalent in modern policing primarily to:",choices:["A. Provide objective documentation of police-public interactions", "B. Increase officer productivity metrics", "C. Replace written reports", "D. Reduce the number of patrol vehicles needed"],ans:0},
+  {id:318,sec:"tb",src:"Textbook Ch. 2 – Policing Today",q:"Social media platforms are now utilized by police departments for which of the following purposes?",choices:["A. Exclusively for recruiting new officers", "B. Community engagement, information sharing, and crime prevention", "C. Replacement of emergency communication systems", "D. Monitoring all civilian communications"],ans:1},
+  {id:319,sec:"tb",src:"Textbook Ch. 2 – Policing Today",q:"Which of the following best characterizes the shift from traditional policing to modern policing strategies?",choices:["A. Reducing the use of specialized units", "B. Moving from reactive incident response to proactive, data-informed operations", "C. Moving from data-driven to experience-based decisions", "D. Increasing isolation between police and community members"],ans:1},
+  {id:320,sec:"tb",src:"Textbook Ch. 2 – Policing Today",q:"How has the 24-hour news cycle and instant communication affected modern police administration?",choices:["A. Police departments have eliminated social media presence", "B. Police operations have become faster and more responsive to immediate accountability demands", "C. Police now focus exclusively on violent crime", "D. Crime reporting has become less important"],ans:1},
+  {id:321,sec:"tb",src:"Textbook Ch. 2 – Policing Today",q:"In modern policing, the term 'hot spots' typically refers to:",choices:["A. Community centers with high youth engagement", "B. Locations with concentrated historical and predicted criminal activity", "C. Police stations with the highest operating budgets", "D. Police training facilities"],ans:1},
+  {id:322,sec:"tb",src:"Textbook Ch. 2 – Policing Today",q:"Which technology has revolutionized police response capabilities by providing real-time location and incident information?",choices:["A. Telephone-based reporting only", "B. Printed dispatch logs", "C. Radio communication systems alone", "D. Computer-Aided Dispatch (CAD) and mobile data terminals"],ans:3},
+  {id:323,sec:"tb",src:"Textbook Ch. 2 – Policing Today",q:"Evidence-based policing requires police departments to:",choices:["A. Increase enforcement regardless of effectiveness", "B. Only use traditional enforcement methods", "C. Eliminate all community engagement programs", "D. Adopt practices validated through rigorous research and data analysis"],ans:3},
+  {id:324,sec:"tb",src:"Textbook Ch. 4 – Politics and Police Administration",q:"The chief of police functions as a political actor in which of the following contexts?",choices:["A. Only during election years", "B. Never, as policing is completely apolitical", "C. When interacting with elected officials, community members, and internal stakeholders", "D. Only when managing officer discipline"],ans:2},
+  {id:325,sec:"tb",src:"Textbook Ch. 4 – Politics and Police Administration",q:"Which governmental level most directly influences local police operations through budget allocation and policy?",choices:["A. International government organizations", "B. State government exclusively", "C. Federal government exclusively", "D. Local government including city councils and mayors"],ans:3},
+  {id:326,sec:"tb",src:"Textbook Ch. 4 – Politics and Police Administration",q:"State government influences police administration primarily through:",choices:["A. Setting statewide standards, providing training, and establishing legal frameworks", "B. Preventing community input", "C. Direct control of all police personnel", "D. Eliminating local police departments"],ans:0},
+  {id:327,sec:"tb",src:"Textbook Ch. 4 – Politics and Police Administration",q:"The courts influence police administration by:",choices:["A. Hiring and firing police officers", "B. Determining enforcement budgets", "C. Interpreting laws, establishing legal standards for police conduct, and reviewing police actions", "D. Setting patrol schedules"],ans:2},
+  {id:328,sec:"tb",src:"Textbook Ch. 4 – Politics and Police Administration",q:"Citizens influence police administration through which of the following mechanisms?",choices:["A. Direct operation of police vehicles", "B. Voting, attending public meetings, and filing complaints", "C. Training police officers", "D. Setting police budgets unilaterally"],ans:1},
+  {id:329,sec:"tb",src:"Textbook Ch. 4 – Politics and Police Administration",q:"A police chief's political awareness and stakeholder management skills are important because:",choices:["A. Community members have no legitimate interest in police policy", "B. Police work is purely technical and requires no political understanding", "C. Police chiefs should ignore elected officials completely", "D. The chief must balance diverse interests while maintaining police legitimacy and support"],ans:3},
+  {id:330,sec:"tb",src:"Textbook Ch. 4 – Politics and Police Administration",q:"When a police chief decides to implement a new community policing initiative, which political stakeholder's support is typically most critical?",choices:["A. The city council and mayor who control funding and policy authority", "B. Police union representatives only", "C. The federal government exclusively", "D. Citizens never need to be consulted"],ans:0},
+  {id:331,sec:"tb",src:"Textbook Ch. 6 – Organizational Design",q:"Specialization in police organizational design refers to:",choices:["A. Dividing work into distinct units focused on specific functions or problems", "B. Limiting officers to patrol duties only", "C. Eliminating the need for training", "D. Reducing the number of police departments"],ans:0},
+  {id:332,sec:"tb",src:"Textbook Ch. 6 – Organizational Design",q:"What is 'span of control' in police organizational structures?",choices:["A. The total number of police officers in a department", "B. The geographic area covered by a police department", "C. The budget allocated for equipment", "D. The number of subordinates directly supervised by one manager"],ans:3},
+  {id:333,sec:"tb",src:"Textbook Ch. 6 – Organizational Design",q:"In a police organizational hierarchy, 'line functions' typically include:",choices:["A. Records management and accounting", "B. Direct service delivery such as patrol and investigations", "C. Community outreach programs exclusively", "D. Strategic planning only"],ans:1},
+  {id:334,sec:"tb",src:"Textbook Ch. 6 – Organizational Design",q:"'Staff functions' in police organizations primarily serve to:",choices:["A. Eliminate patrol responsibilities", "B. Reduce the need for supervision", "C. Provide support and expertise to line functions", "D. Make direct decisions without supervisory approval"],ans:2},
+  {id:335,sec:"tb",src:"Textbook Ch. 6 – Organizational Design",q:"A functional design in police organizations typically organizes units by:",choices:["A. Specific types of work such as patrol, investigations, traffic, and special operations", "B. Geographic distance from headquarters only", "C. Officer seniority and age", "D. Random assignment of personnel"],ans:0},
+  {id:336,sec:"tb",src:"Textbook Ch. 6 – Organizational Design",q:"Which of the following best describes the relationship between hierarchy and span of control in police organizations?",choices:["A. Span of control has no impact on organizational structure", "B. They are completely unrelated concepts", "C. Hierarchy is determined solely by budget size", "D. A larger span of control typically requires a flatter organizational hierarchy"],ans:3},
+  {id:337,sec:"tb",src:"Textbook Ch. 6 – Organizational Design",q:"Centralizing decision-making authority in a police organization typically results in:",choices:["A. More consistency in policies but potentially slower response to local needs", "B. Elimination of supervisory positions", "C. Greater operational flexibility at all levels", "D. Increased officer autonomy"],ans:0},
+  {id:338,sec:"tb",src:"Textbook Ch. 6 – Organizational Design",q:"A geographic or precinct-based organizational design allows police departments to:",choices:["A. Reduce accountability mechanisms", "B. Operate without supervisory oversight", "C. Eliminate the need for professional standards", "D. Better tailor policing strategies to specific community needs and characteristics"],ans:3},
+  {id:339,sec:"tb",src:"Textbook Ch. 7 – Leadership",q:"According to Max Weber, 'traditional authority' in organizations is based on:",choices:["A. Long-standing customs, beliefs, and historical precedent", "B. Rational legal frameworks and established rules", "C. Charismatic personal qualities of leaders", "D. Democratic voting by all members"],ans:0},
+  {id:340,sec:"tb",src:"Textbook Ch. 7 – Leadership",q:"Which of Weber's three types of authority is most dominant in modern police organizations?",choices:["A. Charismatic authority based on personal appeal", "B. Democratic authority based on consensus", "C. Rational-legal authority based on rules, procedures, and positional power", "D. Traditional authority based on historical precedent"],ans:2},
+  {id:341,sec:"tb",src:"Textbook Ch. 7 – Leadership",q:"Charismatic authority as described by Weber relies primarily on:",choices:["A. Historical tradition and custom", "B. The exceptional personal qualities and appeal of the leader", "C. Written rules and formal procedures", "D. Democratic decision-making processes"],ans:1},
+  {id:342,sec:"tb",src:"Textbook Ch. 7 – Leadership",q:"The concept of 'power motivation' in leadership refers to:",choices:["A. Using force to compel compliance", "B. The desire to have impact, influence, and effect outcomes", "C. Paying employees higher salaries", "D. Avoiding all difficult decisions"],ans:1},
+  {id:343,sec:"tb",src:"Textbook Ch. 7 – Leadership",q:"According to leadership theory, emotional intelligence in leaders includes:",choices:["A. Making decisions without considering impact on people", "B. Ignoring the feelings of subordinates", "C. Avoiding all conflict situations", "D. The ability to recognize, understand, and manage emotions in self and others"],ans:3},
+  {id:344,sec:"tb",src:"Textbook Ch. 7 – Leadership",q:"An autocratic leadership style in police organizations typically results in:",choices:["A. Centralized decision-making with limited input from subordinates", "B. Elimination of accountability structures", "C. Community control of all police operations", "D. Maximum officer autonomy and discretion"],ans:0},
+  {id:345,sec:"tb",src:"Textbook Ch. 7 – Leadership",q:"Transformational leadership differs from transactional leadership in that it:",choices:["A. Inspires and motivates followers toward shared vision and higher purposes", "B. Focuses only on short-term goal achievement", "C. Eliminates all rules and procedures", "D. Is based solely on rewards and punishments"],ans:0},
+  {id:346,sec:"tb",src:"Textbook Ch. 7 – Leadership",q:"Which of the following is a characteristic of an effective police leader?",choices:["A. Avoiding interaction with community members", "B. Providing clear direction while remaining open to input and feedback", "C. Making decisions without considering consequences", "D. Using power to control rather than influence"],ans:1},
+  {id:347,sec:"tb",src:"Textbook Ch. 7 – Leadership",q:"The concept of legitimate power in leadership refers to:",choices:["A. The number of friends one has in the organization", "B. Personal wealth or possessions", "C. The ability to use physical force against subordinates", "D. The authority derived from one's formal position in the organization"],ans:3},
+  {id:348,sec:"tb",src:"Textbook Ch. 8 – Planning and Decision Making",q:"What does SITAR represent in the context of police planning?",choices:["A. A federal law enforcement training program", "B. A framework including Situation, Impact, Timing, Actions, and Resources", "C. A type of police vehicle used in patrol", "D. A communication protocol used by dispatch"],ans:1},
+  {id:349,sec:"tb",src:"Textbook Ch. 8 – Planning and Decision Making",q:"Synoptic planning in police administration is characterized by:",choices:["A. Avoiding all planning activities", "B. Making quick decisions without analysis", "C. Comprehensive, rational analysis of problems leading to detailed plans", "D. Planning only for immediate emergencies"],ans:2},
+  {id:350,sec:"tb",src:"Textbook Ch. 8 – Planning and Decision Making",q:"In the rational decision-making model, which step occurs immediately after identifying alternatives?",choices:["A. Implementation of the first alternative", "B. Seeking community input exclusively", "C. Evaluation and comparison of alternatives", "D. Ignoring all options"],ans:2},
+  {id:351,sec:"tb",src:"Textbook Ch. 8 – Planning and Decision Making",q:"Bounded rationality in decision-making acknowledges that:",choices:["A. Decision-makers have limited information, cognitive capacity, and time", "B. Police never make rational decisions", "C. Emotions play no role in decisions", "D. All available information can always be obtained"],ans:0},
+  {id:352,sec:"tb",src:"Textbook Ch. 8 – Planning and Decision Making",q:"The incremental decision-making approach is based on:",choices:["A. Avoiding all change entirely", "B. Making small adjustments to existing policies and practices", "C. Basing decisions exclusively on data", "D. Making one large comprehensive change at once"],ans:1},
+  {id:353,sec:"tb",src:"Textbook Ch. 8 – Planning and Decision Making",q:"Political decision-making in police organizations emphasizes:",choices:["A. Negotiation, compromise, and building coalitions among stakeholders", "B. Eliminating input from affected parties", "C. Pure rational analysis ignoring all political factors", "D. Only technical factors and efficiency"],ans:0},
+  {id:354,sec:"tb",src:"Textbook Ch. 8 – Planning and Decision Making",q:"Gut-level decision-making relies primarily on:",choices:["A. Comprehensive data analysis and research", "B. Intuition, experience, and instinctive judgment", "C. Avoiding all decisions", "D. Democratic voting"],ans:1},
+  {id:355,sec:"tb",src:"Textbook Ch. 8 – Planning and Decision Making",q:"Recognition-Primed Decision (RPD) model suggests that experienced officers make decisions by:",choices:["A. Quickly recognizing situations and applying learned patterns", "B. Consulting manuals and guidelines before acting", "C. Always consulting supervisors before acting", "D. Never using past experience"],ans:0},
+  {id:356,sec:"tb",src:"Textbook Ch. 8 – Planning and Decision Making",q:"Which decision-making approach is most likely to be used during a high-stress emergency situation?",choices:["A. Synoptic planning with full analysis", "B. Incremental adjustment to policies", "C. Recognition-Primed Decision (RPD) or gut-level decision-making", "D. Community consensus seeking"],ans:2},
+  {id:357,sec:"tb",src:"Textbook Ch. 10 – Organizational and Interpersonal Communication",q:"Barriers to effective communication in police organizations include:",choices:["A. Clear hierarchies and structured protocols", "B. Excessive communication between all levels", "C. Status differences, information overload, and cultural disparities", "D. Too much officer autonomy"],ans:2},
+  {id:358,sec:"tb",src:"Textbook Ch. 10 – Organizational and Interpersonal Communication",q:"Downward communication in a police organization typically involves:",choices:["A. Patrol officers requesting resources from the chief", "B. Line officers directly creating organizational policies", "C. Officers reporting to community members about investigations", "D. Supervisors providing directions, policies, and feedback to subordinates"],ans:3},
+  {id:359,sec:"tb",src:"Textbook Ch. 10 – Organizational and Interpersonal Communication",q:"Upward communication in police organizations is important for:",choices:["A. Preventing officers from providing input", "B. Avoiding accountability", "C. Eliminating feedback mechanisms", "D. Ensuring supervisors understand field conditions and subordinate concerns"],ans:3},
+  {id:360,sec:"tb",src:"Textbook Ch. 10 – Organizational and Interpersonal Communication",q:"Horizontal communication in police departments refers to:",choices:["A. Communication between officers at the same organizational level", "B. One-way communication from management to staff", "C. Communication with external agencies exclusively", "D. Communication between the chief and beat officers only"],ans:0},
+  {id:361,sec:"tb",src:"Textbook Ch. 10 – Organizational and Interpersonal Communication",q:"The 'grapevine' in police organizations refers to:",choices:["A. A system for documenting performance evaluations", "B. Informal networks through which rumors and unofficial information spread", "C. The formal evidence collection process", "D. An official communication channel established by leadership"],ans:1},
+  {id:362,sec:"tb",src:"Textbook Ch. 10 – Organizational and Interpersonal Communication",q:"Group dynamics and cohesion in police organizations can be affected by:",choices:["A. Preventing officers from knowing each other", "B. Ignoring team performance", "C. Eliminating all team interactions", "D. Status differentiation, group size, and shared experiences or threats"],ans:3},
+  {id:363,sec:"tb",src:"Textbook Ch. 10 – Organizational and Interpersonal Communication",q:"Police departments using social media for communications should be aware of:",choices:["A. It has no impact on public perception", "B. Social media eliminates the need for official statements", "C. All social media posts are completely private", "D. Public scrutiny, misinformation risks, and the permanence of posted content"],ans:3},
+  {id:364,sec:"tb",src:"Textbook Ch. 10 – Organizational and Interpersonal Communication",q:"Active listening as a communication skill involves:",choices:["A. Simply waiting for the speaker to finish without paying attention", "B. Avoiding eye contact with the speaker", "C. Planning your response while the other person is still speaking", "D. Fully focusing on understanding the speaker's message and responding appropriately"],ans:3},
+  {id:365,sec:"tb",src:"Textbook Ch. 13 – Stress and Police Personnel",q:"The General Adaptation Syndrome (GAS) model describes stress response in three stages. The first stage is called:",choices:["A. Exhaustion", "B. Resistance", "C. Recovery", "D. Alarm"],ans:3},
+  {id:366,sec:"tb",src:"Textbook Ch. 13 – Stress and Police Personnel",q:"During the 'resistance' stage of General Adaptation Syndrome, the body:",choices:["A. Returns completely to normal functioning", "B. Initially recognizes a stressor and activates defenses", "C. Adapts to the stressor and maintains heightened defense mechanisms", "D. Loses ability to function and becomes depleted"],ans:2},
+  {id:367,sec:"tb",src:"Textbook Ch. 13 – Stress and Police Personnel",q:"Type A personality is characterized by:",choices:["A. Competitiveness, impatience, and time urgency", "B. Calm demeanor and lack of urgency", "C. Complete indifference to achievement", "D. Avoidance of all responsibility"],ans:0},
+  {id:368,sec:"tb",src:"Textbook Ch. 13 – Stress and Police Personnel",q:"Type B personality tends to display:",choices:["A. Extreme competitiveness and constant time pressure", "B. Relaxed approach, patience, and less concern with achievement timelines", "C. Inability to complete any tasks", "D. Complete lack of motivation"],ans:1},
+  {id:369,sec:"tb",src:"Textbook Ch. 13 – Stress and Police Personnel",q:"A workaholic personality in police settings may exhibit:",choices:["A. Complete avoidance of responsibility", "B. Excessive work engagement, difficulty setting boundaries, and stress-related health issues", "C. Lack of commitment to the organization", "D. Refusal to work overtime"],ans:1},
+  {id:370,sec:"tb",src:"Textbook Ch. 13 – Stress and Police Personnel",q:"Post-Traumatic Stress Disorder (PTSD) in police officers can develop following:",choices:["A. Receiving positive performance evaluations", "B. Vacation time without work", "C. Exposure to critical incidents such as officer-involved shootings, assaults, or colleague deaths", "D. Routine administrative duties"],ans:2},
+  {id:371,sec:"tb",src:"Textbook Ch. 13 – Stress and Police Personnel",q:"Suicide risk among police officers is associated with which of the following factors?",choices:["A. Untreated mental health conditions, easy access to firearms, and perceived isolation", "B. Higher job satisfaction and strong community support", "C. Adequate vacation time and regular social engagement", "D. Positive relationships with family and colleagues"],ans:0},
+  {id:372,sec:"tb",src:"Textbook Ch. 13 – Stress and Police Personnel",q:"Peer support programs in police departments are designed to:",choices:["A. Replace supervision and discipline procedures", "B. Eliminate the need for professional mental health services", "C. Provide officers with trained colleagues to talk to about stress and trauma", "D. Increase work requirements for all officers"],ans:2},
+  {id:373,sec:"tb",src:"Textbook Ch. 13 – Stress and Police Personnel",q:"Which of the following is an appropriate police leadership response to officer stress and mental health concerns?",choices:["A. Dismissing concerns as weakness or lack of toughness", "B. Punishing officers who show any signs of stress", "C. Creating supportive policies, accessing professional help, and normalizing mental health discussions", "D. Ignoring warning signs and hoping problems resolve independently"],ans:2},
+  {id:374,sec:"tb",src:"Textbook Ch. 13 – Stress and Police Personnel",q:"Critical Incident Stress Debriefing (CISD) following traumatic police events serves to:",choices:["A. Gather evidence for internal investigations only", "B. Punish officers involved in incidents", "C. Help officers process experiences and identify those needing further support", "D. Prevent officers from discussing incidents with anyone"],ans:2},
+  {id:375,sec:"cba",src:"CBA Art. 28, Sec. 16",q:"Under the CBA, the Chief of Police may suspend an officer for an agreed disciplinary action for a maximum of how many calendar days?",choices:["A. 60 calendar days", "B. 30 calendar days", "C. 120 calendar days", "D. 90 calendar days"],ans:2},
+  {id:376,sec:"cba",src:"CBA Art. 28, Sec. 16",q:"When an officer agrees to a disciplinary action under Article 28, Sec. 16, which is TRUE regarding the officer's appeal rights?",choices:["A. The officer may appeal to the Chief only, not Civil Service", "B. The officer has no right to appeal an agreed disciplinary action", "C. The officer has 10 days to file an appeal with SAPOA", "D. The officer retains full appeal rights to Civil Service"],ans:1},
+  {id:377,sec:"cba",src:"CBA Art. 28, Sec. 18",q:"An officer suspended for 45 working days or less may elect to forfeit leave in lieu of suspension. How many calendar days does the officer have to make this decision?",choices:["A. 14 calendar days", "B. 7 calendar days", "C. 10 calendar days", "D. 5 calendar days"],ans:2},
+  {id:378,sec:"cba",src:"CBA Art. 28, Sec. 19 – 180-Day Rule",q:"Under the CBA's 180-day rule, discipline CANNOT be imposed for acts that occurred more than how many days before the Chief of Police first knew of the act?",choices:["A. 365 days", "B. 180 days", "C. 90 days", "D. 120 days"],ans:1},
+  {id:379,sec:"cba",src:"CBA Art. 28, Sec. 19 – 180-Day Rule",q:"What is the absolute maximum time limit after which NO discipline may be imposed (absent the criminal conduct exception)?",choices:["A. 1 year after the act", "B. 2 years after the act", "C. 18 months after the act", "D. 3 years after the act"],ans:1},
+  {id:380,sec:"cba",src:"CBA Art. 28, Sec. 19 – Scenario",q:"An officer committed a policy violation on January 1st. The Chief first learned of the violation 243 days later. Under the 180-day rule, which applies?",choices:["A. Discipline cannot be imposed because the Chief did not learn of the act within 180 days", "B. The 180-day rule does not apply to policy violations", "C. Discipline may still be imposed because less than 2 years have passed", "D. Discipline may be imposed only if the officer agrees to it"],ans:0},
+  {id:381,sec:"cba",src:"CBA Art. 29, Sec. 1",q:"Chain-of-command investigations must be completed within how many calendar days?",choices:["A. 14 calendar days", "B. 21 calendar days", "C. 30 calendar days", "D. 10 calendar days"],ans:1},
+  {id:382,sec:"cba",src:"CBA Art. 29, Sec. 1",q:"Under the CBA, chain-of-command suspensions cannot exceed what maximum?",choices:["A. 10 working days (80 working hours)", "B. 7 working days (56 working hours)", "C. 3 working days (24 working hours)", "D. 5 working days (40 working hours)"],ans:3},
+  {id:383,sec:"cba",src:"CBA Art. 29, Sec. 2",q:"When an officer is to be interrogated by Internal Affairs, the officer must be notified how far in advance?",choices:["A. 48 hours prior", "B. 8 hours prior", "C. 12 hours prior", "D. 24 hours prior"],ans:3},
+  {id:384,sec:"cba",src:"CBA Art. 29, Sec. 2",q:"No single Internal Affairs interrogation session shall exceed how many hours (absent exigent circumstances)?",choices:["A. 10 hours", "B. 6 hours", "C. 4 hours", "D. 8 hours"],ans:3},
+  {id:385,sec:"cba",src:"CBA Art. 29, Sec. 2",q:"Before an Internal Affairs interrogation, an officer has the right to:",choices:["A. Have a supervisor of their choosing present during the interview", "B. Review all evidence against them before answering any questions", "C. Consult with an attorney prior to the interview", "D. Refuse to participate until a union representative is present in the room"],ans:2},
+  {id:386,sec:"cba",src:"CBA Art. 29, Sec. 2",q:"A polygraph examination may only be administered to an officer during an investigation when:",choices:["A. IA determines it is necessary during any investigation", "B. The Chief of Police specifically orders it", "C. The complainant has been examined by a polygraph and found to be truthful", "D. The officer volunteers to take the test"],ans:2},
+  {id:387,sec:"cba",src:"CBA Art. 29, Sec. 3 – CCARB",q:"The Chief's Career Action Review Board (CCARB) consists of how many voting members?",choices:["A. 6 voting members", "B. 5 voting members", "C. 9 voting members", "D. 7 voting members"],ans:3},
+  {id:388,sec:"cba",src:"CBA Art. 29, Sec. 3 – CCARB",q:"The CCARB is chaired by which member?",choices:["A. The SAPOA President", "B. A Captain selected by a vote of the board", "C. The most senior Lieutenant on the board", "D. A Deputy Chief designated by the Chief of Police"],ans:3},
+  {id:389,sec:"cba",src:"CBA Art. 29, Sec. 3 – CCARB",q:"The recommendations of the CCARB are:",choices:["A. Advisory only and not binding on the Chief of Police", "B. Final and may not be appealed by any party", "C. Binding on the Chief of Police", "D. Subject to a majority vote override by SAPOA"],ans:0},
+  {id:390,sec:"cba",src:"CBA Art. 33",q:"Under the CBA's Education Incentive Pay, how much does an officer with a Bachelor's degree receive per month?",choices:["A. $315 per month", "B. $215 per month", "C. $335 per month", "D. $350 per month"],ans:0},
+  {id:391,sec:"cba",src:"CBA Art. 33",q:"Under the CBA tuition reimbursement program, an officer who earns a grade of 'C' will receive what percentage of reimbursement?",choices:["A. 80%", "B. 100%", "C. 0%", "D. 90%"],ans:0},
+  {id:392,sec:"cba",src:"CBA Art. 34",q:"Under the CBA's Certification Pay, an officer holding an Intermediate TCOLE certificate receives how much per month?",choices:["A. $200 per month", "B. $160 per month", "C. $50 per month", "D. $240 per month"],ans:1},
+  {id:393,sec:"cba",src:"CBA Art. 35",q:"What percentage of officers are subject to mandatory drug testing under the CBA?",choices:["A. 100% of all officers", "B. 50% selected randomly each year", "C. 75% selected by unit", "D. Only officers in specialized units"],ans:0},
+  {id:394,sec:"cba",src:"CBA Art. 35",q:"How many hours does an officer have to provide a urine sample after being notified of a required drug test?",choices:["A. 1 hour", "B. 2 hours", "C. 4 hours", "D. 8 hours"],ans:2},
+  {id:395,sec:"cba",src:"CBA Art. 36 – City Protection for Police Officers",q:"Under Article 36, the City will defend an officer in or out of court when charges arise from what?",choices:["A. The lawful performance of the officer's duties", "B. Any conduct pre-approved in writing by a supervisor", "C. Off-duty conduct if the badge was displayed", "D. Any conduct while in uniform, on or off duty"],ans:0},
+  {id:396,sec:"cba",src:"CBA Art. 36 – City Protection for Police Officers",q:"The City's legal protection for officers under Article 36 is authorized by which City Ordinance?",choices:["A. City Ordinance 72815", "B. City Ordinance 83927", "C. City Ordinance 66512", "D. City Ordinance 91043"],ans:1},
+  {id:397,sec:"cba",src:"CBA Art. 37 – Employee Personnel Systems",q:"Under Article 37, the Police Personnel Unit must be staffed with a minimum of how many Sergeants or above?",choices:["A. Two", "B. Three", "C. One", "D. Four"],ans:2},
+  {id:398,sec:"cba",src:"CBA Art. 37 – Employee Personnel Systems",q:"Under Article 37, all premium relief days must be filled or abolished within how many calendar days?",choices:["A. 21 days", "B. 14 days", "C. 45 days", "D. 30 days"],ans:3},
+  {id:399,sec:"cba",src:"CBA Art. 37 – Employee Personnel Systems",q:"Which of the following is defined as a premium relief day under Article 37?",choices:["A. Thursday/Friday", "B. Monday/Tuesday", "C. Wednesday/Thursday", "D. Tuesday/Wednesday"],ans:0},
+  {id:400,sec:"cba",src:"CBA Art. 37 – Employee Personnel Systems",q:"Under Article 37, the 30-day requirement for filling premium relief days is waived from which date?",choices:["A. March 1 through the last day of April", "B. February 24 through the last day of Fiesta", "C. January 1 through last day of Spring Break", "D. The entire month of April"],ans:1},
+  {id:401,sec:"cba",src:"CBA Art. 37 – Employee Personnel Systems",q:"Article 37 requires the Police Personnel Unit to process relief day assignments based on which criterion?",choices:["A. Division Commander preference", "B. Officer performance rating", "C. Seniority of requests on file", "D. Random selection"],ans:2}
+];
+
+// ══════════════════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════════════════
+const STORAGE_KEY = 'sapd_sgt_v4';
+
+function loadProgress() {
+  try { const r = localStorage.getItem(STORAGE_KEY); if (r) return JSON.parse(r); } catch(e){}
+  const p = {};
+  QUESTIONS.forEach(q => { p[q.id] = {correct:0, attempts:0, weight:3}; });
+  return p;
+}
+function saveProgress(p) { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(p)); } catch(e){} }
+
+let progress = loadProgress();
+QUESTIONS.forEach(q => { if (!progress[q.id]) progress[q.id] = {correct:0, attempts:0, weight:3}; });
+
+let session = { queue:[], current:0, score:0, total:0, answered:false, sessionLen:20, sections:new Set(['gm','pc','tb','cba']), history:[] };
+
+// ══════════════════════════════════════════════════════
+//  CONTROLS
+// ══════════════════════════════════════════════════════
+function toggleSection(btn) {
+  const sec = btn.dataset.section;
+  if (session.sections.has(sec)) {
+    if (session.sections.size > 1) { session.sections.delete(sec); btn.classList.remove('selected'); }
+  } else { session.sections.add(sec); btn.classList.add('selected'); }
+}
+
+function setLen(n, btn) {
+  session.sessionLen = n;
+  document.querySelectorAll('.len-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+// ══════════════════════════════════════════════════════
+//  WEIGHTED SELECTION
+// ══════════════════════════════════════════════════════
+function buildQueue() {
+  const pool = QUESTIONS.filter(q => session.sections.has(q.sec));
+  if (!pool.length) return [];
+  const n = session.sessionLen === 999 ? pool.length : Math.min(session.sessionLen, pool.length);
+  let remaining = pool.map(q => ({q, w: Math.max(1, progress[q.id].weight ** 2)}));
+  const selected = [];
+  for (let i = 0; i < n; i++) {
+    const sum = remaining.reduce((a,x) => a+x.w, 0);
+    let r = Math.random() * sum, idx = 0;
+    for (let j = 0; j < remaining.length; j++) { r -= remaining[j].w; if (r <= 0) { idx = j; break; } }
+    selected.push(remaining[idx].q.id);
+    remaining.splice(idx, 1);
+  }
+  return selected;
+}
+
+// ══════════════════════════════════════════════════════
+//  SESSION
+// ══════════════════════════════════════════════════════
+function startSession() {
+  const queue = buildQueue();
+  if (!queue.length) { alert('No questions in selected sections!'); return; }
+  Object.assign(session, { queue, current:0, score:0, total:queue.length, answered:false, history:[] });
+  showScreen('quiz');
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const q = QUESTIONS.find(x => x.id === session.queue[session.current]);
+  const idx = session.current, total = session.total;
+
+  document.getElementById('quiz-counter').textContent = `${idx+1} / ${total}`;
+  document.getElementById('quiz-score-live').textContent = `✓ ${session.score}`;
+  document.getElementById('quiz-prog').style.width = `${(idx/total)*100}%`;
+
+  const pill = document.getElementById('quiz-pill');
+  pill.textContent = {gm:'GM',pc:'PC',tb:'TEXTBOOK',cba:'CBA'}[q.sec];
+  pill.className = `section-pill pill-${q.sec}`;
+
+  // Streak
+  const recent = session.history.slice(-10);
+  document.getElementById('streak-bar').innerHTML =
+    Array.from({length:10},(_,i) => { const h=recent[i]; return `<div class="streak-dot${h?(h.correct?' hit':' miss'):''}"></div>`; }).join('');
+
+  document.getElementById('q-source').textContent = q.src;
+  document.getElementById('q-text').textContent = q.q;
+
+  const letters = ['A','B','C','D'];
+  document.getElementById('choices-wrap').innerHTML = q.choices.map((c,i) =>
+    `<button class="choice-btn" onclick="selectAnswer(${i})" id="ch-${i}">
+      <span class="choice-letter">${letters[i]}</span><span>${c}</span>
+    </button>`
+  ).join('');
+
+  const fb = document.getElementById('feedback');
+  fb.className = 'feedback';
+  document.getElementById('next-btn').style.display = 'none';
+  session.answered = false;
+}
+
+function selectAnswer(chosen) {
+  if (session.answered) return;
+  session.answered = true;
+  const q = QUESTIONS.find(x => x.id === session.queue[session.current]);
+  const correct = chosen === q.ans;
+  const p = progress[q.id];
+  p.attempts++;
+  if (correct) { p.correct++; p.weight = Math.max(1, p.weight - 1); }
+  else { p.weight = Math.min(5, p.weight + 2); }
+  saveProgress(progress);
+
+  document.querySelectorAll('.choice-btn').forEach((btn, i) => {
+    btn.disabled = true;
+    if (i === q.ans) btn.classList.add(correct && i===chosen ? 'correct' : 'reveal');
+    if (!correct && i === chosen) btn.classList.add('wrong');
+  });
+
+  const fb = document.getElementById('feedback');
+  fb.className = `feedback show ${correct?'correct':'wrong'}`;
+  document.getElementById('feedback-title').textContent = correct ? '✓ Correct!' : '✗ Incorrect';
+  document.getElementById('feedback-body').textContent = correct
+    ? 'Nice — keep the streak going!'
+    : `Correct answer: ${['A','B','C','D'][q.ans]} — ${q.choices[q.ans]}`;
+  document.getElementById('ref-src-text').textContent = q.src;
+
+  if (correct) session.score++;
+  session.history.push({id:q.id, correct, sec:q.sec});
+
+  // Update streak dots
+  const recent = session.history.slice(-10);
+  document.getElementById('streak-bar').innerHTML =
+    Array.from({length:10},(_,i) => { const h=recent[i]; return `<div class="streak-dot${h?(h.correct?' hit':' miss'):''}"></div>`; }).join('');
+
+  document.getElementById('next-btn').style.display = 'block';
+}
+
+function nextQuestion() {
+  session.current++;
+  if (session.current >= session.total) showResults();
+  else renderQuestion();
+}
+
+// ══════════════════════════════════════════════════════
+//  RESULTS
+// ══════════════════════════════════════════════════════
+function showResults() {
+  showScreen('results');
+  const pct = Math.round((session.score/session.total)*100);
+  document.getElementById('res-score').textContent = pct+'%';
+  document.getElementById('res-fraction').textContent = `${session.score} / ${session.total} correct`;
+  const msgs = [[90,'🏆 Outstanding — exam ready!'],[80,'💪 Strong work, drill the misses!'],[70,'📚 Good foundation — focus on weak areas.'],[0,'🔁 Keep going — the app will drill the tough spots!']];
+  document.getElementById('res-msg').textContent = msgs.find(([t])=>pct>=t)[1];
+
+  const secs = ['gm','pc','tb','cba'];
+  const secLabels = {gm:'GM',pc:'PC',tb:'Textbook',cba:'CBA'};
+  const secVars = {gm:'--navy',pc:'--green',tb:'--brown',cba:'--cba'};
+  const counts = {};
+  secs.forEach(s => { counts[s]={c:0,t:0}; });
+  session.history.forEach(h => { if(counts[h.sec]){ counts[h.sec].t++; if(h.correct) counts[h.sec].c++; } });
+  document.getElementById('breakdown-rows').innerHTML = secs.map(s => {
+    const {c,t} = counts[s]; if(!t) return '';
+    const p = Math.round((c/t)*100);
+    return `<div class="breakdown-row">
+      <div class="breakdown-label">${secLabels[s]}</div>
+      <div class="breakdown-bar-wrap"><div class="breakdown-bar" style="width:${p}%;background:var(${secVars[s]})"></div></div>
+      <div class="breakdown-pct" style="color:var(${secVars[s]})">${p}%</div>
+    </div>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════════════════
+//  PROGRESS
+// ══════════════════════════════════════════════════════
+function renderProgress() {
+  const totalAttempts = Object.values(progress).reduce((a,p)=>a+p.attempts,0);
+  const totalCorrect  = Object.values(progress).reduce((a,p)=>a+p.correct,0);
+  const mastered      = Object.values(progress).filter(p=>p.attempts>=2&&p.weight<=1).length;
+  const struggling    = Object.values(progress).filter(p=>p.weight>=4).length;
+  const pct = totalAttempts>0 ? Math.round((totalCorrect/totalAttempts)*100) : 0;
+
+  document.getElementById('stat-grid').innerHTML = `
+    <div class="stat-card"><div class="stat-num">${totalAttempts}</div><div class="stat-label">Total Attempts</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:var(--green)">${pct}%</div><div class="stat-label">Overall Accuracy</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:var(--green)">${mastered}</div><div class="stat-label">Mastered</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:var(--red)">${struggling}</div><div class="stat-label">Need Work</div></div>
+  `;
+  document.getElementById('mastered-banner').innerHTML =
+    `<span>🎯 ${mastered} of ${QUESTIONS.length} questions mastered · ${QUESTIONS.length-mastered} still to go</span>`;
+
+  const secs = ['gm','pc','tb','cba'];
+  const secLabels = {gm:'General Manual (241 Qs)',pc:'Penal Code (63 Qs)',tb:'Textbook (70 Qs)',cba:'CBA (27 Qs)'};
+  const secVars = {gm:'--navy',pc:'--green',tb:'--brown',cba:'--cba'};
+  document.getElementById('full-breakdown').innerHTML = secs.map(s => {
+    const qs = QUESTIONS.filter(q=>q.sec===s);
+    const c = qs.reduce((a,q)=>a+progress[q.id].correct,0);
+    const t = qs.reduce((a,q)=>a+progress[q.id].attempts,0);
+    const p = t>0 ? Math.round((c/t)*100) : 0;
+    return `<div class="breakdown-row">
+      <div class="breakdown-label" style="width:130px;font-size:11px">${secLabels[s]}</div>
+      <div class="breakdown-bar-wrap"><div class="breakdown-bar" style="width:${p}%;background:var(${secVars[s]})"></div></div>
+      <div class="breakdown-pct" style="color:var(${secVars[s]})">${t>0?p+'%':'—'}</div>
+    </div>`;
+  }).join('');
+
+  const weakItems = QUESTIONS.map(q => {
+    const p = progress[q.id];
+    const missRate = p.attempts>0 ? (p.attempts-p.correct)/p.attempts : 0;
+    return {q, p, score: p.weight*10 + missRate*5 + (p.attempts-p.correct)};
+  }).filter(x=>x.p.attempts>0&&x.p.weight>=2).sort((a,b)=>b.score-a.score).slice(0,15);
+
+  if (!weakItems.length) {
+    document.getElementById('weak-list-wrap').innerHTML = '<div class="empty-state">No weak areas yet — start a session to see your results!</div>';
+  } else {
+    const secPills = {gm:'GM',pc:'PC',tb:'TB',cba:'CBA'};
+    document.getElementById('weak-list-wrap').innerHTML = weakItems.map(({q,p}) => {
+      const misses = p.attempts-p.correct;
+      const pct = p.attempts>0 ? Math.round((p.correct/p.attempts)*100) : 0;
+      return `<div class="weak-item">
+        <div style="min-width:32px">
+          <span class="section-pill pill-${q.sec}" style="font-size:9px;padding:2px 6px">${secPills[q.sec]}</span>
+        </div>
+        <div>
+          <div class="weak-src">${q.src}</div>
+          <div class="weak-text">${q.q.substring(0,95)}${q.q.length>95?'…':''}</div>
+          <div class="weak-miss">${misses} miss${misses!==1?'es':''} · ${pct}% accuracy</div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+}
+
+// ══════════════════════════════════════════════════════
+//  NAV
+// ══════════════════════════════════════════════════════
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-'+name).classList.add('active');
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  const tabMap = {home:'tab-home',results:'tab-home',quiz:'tab-home',progress:'tab-progress'};
+  if (tabMap[name]) document.getElementById(tabMap[name]).classList.add('active');
+  if (name==='progress') renderProgress();
+  window.scrollTo(0,0);
+}
+function confirmReset() { document.getElementById('reset-modal').classList.add('show'); }
+function closeModal()    { document.getElementById('reset-modal').classList.remove('show'); }
+function resetAll()      { localStorage.removeItem(STORAGE_KEY); progress=loadProgress(); closeModal(); renderProgress(); }
+
+// countdown
+(function(){
+  const exam = new Date('2026-04-23T09:00:00');
+  const days = Math.max(0, Math.floor((exam-new Date())/86400000));
+  const b = document.getElementById('countdown-badge');
+  const d = document.getElementById('date-badge');
+  if (b) b.textContent = days+(days===1?' DAY':' DAYS');
+  if (d) d.textContent = `📅 ${days} day${days===1?'':'s'} until exam — April 23, 2026 @ 0900`;
+})();
+</script>
+</body>
+</html>
