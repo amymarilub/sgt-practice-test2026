@@ -3834,12 +3834,28 @@ function setLen(n, btn) {
 //  WEIGHTED SELECTION
 // ══════════════════════════════════════════════════════
 function buildQueue() {
-  const pool = QUESTIONS.filter(q => session.sections.has(q.sec));
-  if (!pool.length) return [];
+  const allPool = QUESTIONS.filter(q => session.sections.has(q.sec));
+  if (!allPool.length) return [];
+
+  // A question is "mastered" when weight<=1 AND gotten right at least twice
+  const isMastered = q => progress[q.id].weight <= 1 && progress[q.id].correct >= 2;
+  const active   = allPool.filter(q => !isMastered(q));
+  const mastered = allPool.filter(q =>  isMastered(q));
+
+  // Sprinkle ~1 mastered question per 8 active for light review; more if exam is close
+  const daysLeft = Math.max(0, Math.round((new Date('2026-04-23') - Date.now()) / 86400000));
+  const sprinklePer = daysLeft <= 3 ? 4 : 8;  // sprint week: every 4th; otherwise every 8th
+  const sprinkleCount = Math.min(mastered.length, Math.floor(active.length / sprinklePer));
+  const masteredSample = mastered.slice().sort(() => Math.random() - 0.5).slice(0, sprinkleCount);
+
+  // If all questions are mastered, use the full pool so session never goes empty
+  const pool = active.length > 0 ? [...active, ...masteredSample] : allPool;
+
   const n = session.sessionLen === 999 ? pool.length : Math.min(session.sessionLen, pool.length);
   let remaining = pool.map(q => ({q, w: Math.max(1, progress[q.id].weight ** 2)}));
   const selected = [];
   for (let i = 0; i < n; i++) {
+    if (!remaining.length) break;
     const sum = remaining.reduce((a,x) => a+x.w, 0);
     let r = Math.random() * sum, idx = 0;
     for (let j = 0; j < remaining.length; j++) { r -= remaining[j].w; if (r <= 0) { idx = j; break; } }
