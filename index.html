@@ -3913,13 +3913,30 @@ function selectAnswer(chosen) {
   const fb = document.getElementById('feedback');
   fb.className = `feedback show ${correct?'correct':'wrong'}`;
   document.getElementById('feedback-title').textContent = correct ? '✓ Correct!' : '✗ Incorrect';
+  const correctText = q.choices[q.ans].replace(/^[A-D]\.\s*/i, '');
   document.getElementById('feedback-body').textContent = correct
     ? 'Nice — keep the streak going!'
-    : `Correct answer: ${['A','B','C','D'][q.ans]} — ${q.choices[q.ans]}`;
+    : `Correct answer: ${['A','B','C','D'][q.ans]} — ${correctText}`;
   document.getElementById('ref-src-text').textContent = q.src;
   const citeEl = document.getElementById('ref-cite-text');
   if (q.cite && q.cite.trim()) {
-    citeEl.innerHTML = '<strong style="color:var(--gold);font-style:normal;font-size:10px;text-transform:uppercase;letter-spacing:.5px;">📄 Verbatim Source</strong><br>"' + q.cite.trim() + '"';
+    // Highlight sentence(s) in citation that best match the correct answer
+    const citeRaw = q.cite.trim();
+    const ansWords = correctText.toLowerCase().replace(/[^a-z0-9\s]/g,'').split(/\s+/).filter(w=>w.length>3);
+    // Split cite into sentences and score each by word overlap
+    const sentences = citeRaw.match(/[^.!?]+[.!?]*/g) || [citeRaw];
+    let bestIdx = 0, bestScore = -1;
+    sentences.forEach((s, i) => {
+      const sl = s.toLowerCase();
+      const score = ansWords.filter(w => sl.includes(w)).length;
+      if (score > bestScore) { bestScore = score; bestIdx = i; }
+    });
+    const highlightedCite = sentences.map((s, i) =>
+      i === bestIdx && bestScore > 0
+        ? `<mark style="background:rgba(212,175,55,0.35);color:inherit;border-radius:2px;padding:0 2px;">${s}</mark>`
+        : s
+    ).join('');
+    citeEl.innerHTML = '<strong style="color:var(--gold);font-style:normal;font-size:10px;text-transform:uppercase;letter-spacing:.5px;">📄 Verbatim Source</strong><br>"' + highlightedCite + '"';
     citeEl.style.display = 'block';
   } else {
     citeEl.style.display = 'none';
