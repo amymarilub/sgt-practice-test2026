@@ -145,6 +145,24 @@
 
   .empty-state{text-align:center;padding:30px 16px;color:var(--text3);font-size:13px}
 
+  /* ── FOCUS CARD ── */
+  .focus-card{background:var(--bg2);border:1px solid var(--gold-dim);border-radius:var(--radius);padding:16px;margin-bottom:14px}
+  .focus-card-title{font-size:11px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
+  .focus-row{display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border)}
+  .focus-row:last-child{border-bottom:none;padding-bottom:0}
+  .focus-row-name{font-size:12.5px;color:var(--text);flex:1;padding-right:8px;line-height:1.3}
+  .focus-row-pct{font-size:12px;font-weight:800;white-space:nowrap}
+  .focus-hint-sec{font-size:12px;color:var(--text2);margin-top:8px;line-height:1.5}
+
+  /* ── TOPIC BREAKDOWN (progress screen) ── */
+  .topic-section{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:14px}
+  .topic-section h3{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px}
+  .topic-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+  .topic-label{font-size:11.5px;color:var(--text2);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .topic-bar-wrap{width:80px;background:var(--bg4);border-radius:10px;height:8px;overflow:hidden;flex-shrink:0}
+  .topic-bar{height:100%;border-radius:10px}
+  .topic-pct{font-size:11px;font-weight:700;min-width:32px;text-align:right}
+
   /* ── NAV TABS ── */
   .nav-tabs{display:flex;background:var(--bg2);border-top:1px solid var(--border);position:fixed;bottom:0;left:0;right:0;z-index:100}
   .nav-tab{flex:1;padding:10px 4px 14px;border:none;background:transparent;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;font-weight:600;color:var(--text3);transition:.2s}
@@ -224,6 +242,8 @@
         </div>
       </div>
 
+      <div id="focus-hint" style="display:none"></div>
+
       <button class="btn btn-primary" onclick="startSession()">Start Practice Session →</button>
       <div style="margin-top:10px">
         <button class="btn btn-secondary" onclick="showScreen('progress')">View My Progress &amp; Weak Areas</button>
@@ -300,6 +320,10 @@
       <div class="section-breakdown" style="margin-bottom:14px">
         <h3>Accuracy by Section</h3>
         <div id="full-breakdown"></div>
+      </div>
+      <div class="topic-section">
+        <h3>GM Topic Breakdown</h3>
+        <div id="gm-topic-breakdown"><div class="empty-state">Start a session to see topic accuracy.</div></div>
       </div>
       <div class="weak-list">
         <h3>Top Weak Areas (most missed)</h3>
@@ -3947,6 +3971,55 @@ function showResults() {
 }
 
 // ══════════════════════════════════════════════════════
+//  FOCUS HINT (home screen card)
+// ══════════════════════════════════════════════════════
+function renderFocusHint() {
+  const el = document.getElementById('focus-hint');
+  if (!el) return;
+
+  const secFullLabels = {gm:'General Manual',pc:'Penal Code',tb:'Textbook',cba:'CBA'};
+  const secVars = {gm:'--navy',pc:'--green',tb:'--brown',cba:'--cba'};
+  const topicColor = p => p<60?'var(--red)':p<80?'var(--gold)':'var(--green)';
+
+  // Section accuracies (only sections with attempts)
+  const secStats = ['gm','pc','tb','cba'].map(s => {
+    const qs = QUESTIONS.filter(q=>q.sec===s);
+    const c = qs.reduce((a,q)=>a+progress[q.id].correct,0);
+    const t = qs.reduce((a,q)=>a+progress[q.id].attempts,0);
+    return {sec:s, label:secFullLabels[s], pct:t>0?Math.round((c/t)*100):null, attempts:t, color:`var(${secVars[s]})`};
+  }).filter(s=>s.attempts>0);
+
+  if (!secStats.length) { el.style.display='none'; return; }
+
+  // Weakest 3 GM topics
+  const topicMap = {};
+  QUESTIONS.filter(q=>q.sec==='gm').forEach(q => {
+    const src = q.src;
+    if (!topicMap[src]) topicMap[src]={c:0,t:0};
+    topicMap[src].c += progress[q.id].correct;
+    topicMap[src].t += progress[q.id].attempts;
+  });
+  const weakTopics = Object.entries(topicMap)
+    .filter(([,v])=>v.t>=2)
+    .map(([src,v])=>({src:src.replace(/^GM\s*[\d–\-]*\s*[-–]?\s*/i,''), pct:Math.round((v.c/v.t)*100)}))
+    .sort((a,b)=>a.pct-b.pct).slice(0,3);
+
+  const worstSec = [...secStats].sort((a,b)=>a.pct-b.pct)[0];
+
+  let html = `<div class="focus-card-title">📍 Today's Focus</div>`;
+  html += `<div class="focus-row">
+    <span class="focus-row-name">Weakest section: <strong style="color:${worstSec.color}">${worstSec.label}</strong></span>
+    <span class="focus-row-pct" style="color:${topicColor(worstSec.pct)}">${worstSec.pct}%</span>
+  </div>`;
+  if (weakTopics.length) {
+    html += `<div class="focus-hint-sec">Weakest GM topics: ${weakTopics.map(t=>`<span style="color:${topicColor(t.pct)};font-weight:700">${t.src}</span> <span style="color:${topicColor(t.pct)}">${t.pct}%</span>`).join(' · ')}</div>`;
+  }
+  el.innerHTML = html;
+  el.className = 'focus-card';
+  el.style.display = 'block';
+}
+
+// ══════════════════════════════════════════════════════
 //  PROGRESS
 // ══════════════════════════════════════════════════════
 function renderProgress() {
@@ -3966,7 +4039,7 @@ function renderProgress() {
     `<span>🎯 ${mastered} of ${QUESTIONS.length} questions mastered · ${QUESTIONS.length-mastered} still to go</span>`;
 
   const secs = ['gm','pc','tb','cba'];
-  const secLabels = {gm:'General Manual (241 Qs)',pc:'Penal Code (63 Qs)',tb:'Textbook (70 Qs)',cba:'CBA (27 Qs)'};
+  const secFullLabels = {gm:'General Manual',pc:'Penal Code',tb:'Textbook',cba:'CBA'};
   const secVars = {gm:'--navy',pc:'--green',tb:'--brown',cba:'--cba'};
   document.getElementById('full-breakdown').innerHTML = secs.map(s => {
     const qs = QUESTIONS.filter(q=>q.sec===s);
@@ -3974,11 +4047,35 @@ function renderProgress() {
     const t = qs.reduce((a,q)=>a+progress[q.id].attempts,0);
     const p = t>0 ? Math.round((c/t)*100) : 0;
     return `<div class="breakdown-row">
-      <div class="breakdown-label" style="width:130px;font-size:11px">${secLabels[s]}</div>
+      <div class="breakdown-label" style="width:130px;font-size:11px">${secFullLabels[s]} (${qs.length})</div>
       <div class="breakdown-bar-wrap"><div class="breakdown-bar" style="width:${p}%;background:var(${secVars[s]})"></div></div>
       <div class="breakdown-pct" style="color:var(${secVars[s]})">${t>0?p+'%':'—'}</div>
     </div>`;
   }).join('');
+
+  // GM Topic Breakdown
+  const topicMap = {};
+  QUESTIONS.filter(q=>q.sec==='gm').forEach(q => {
+    const src = q.src;
+    if (!topicMap[src]) topicMap[src] = {c:0,t:0};
+    topicMap[src].c += progress[q.id].correct;
+    topicMap[src].t += progress[q.id].attempts;
+  });
+  const topicRows = Object.entries(topicMap)
+    .filter(([,v])=>v.t>0)
+    .map(([src,v])=>({src, pct:Math.round((v.c/v.t)*100), t:v.t}))
+    .sort((a,b)=>a.pct-b.pct);
+  const topicColor = p => p<60?'var(--red)':p<80?'var(--gold)':'var(--green)';
+  document.getElementById('gm-topic-breakdown').innerHTML = topicRows.length
+    ? topicRows.map(({src,pct,t})=>`
+      <div class="topic-row">
+        <span class="topic-label">${src.replace(/^GM\s*[\d–\-]*\s*[-–]?\s*/i,'')}</span>
+        <div class="topic-bar-wrap"><div class="topic-bar" style="width:${pct}%;background:${topicColor(pct)}"></div></div>
+        <span class="topic-pct" style="color:${topicColor(pct)}">${pct}%</span>
+      </div>`).join('')
+    : '<div class="empty-state">Start a session to see topic accuracy.</div>';
+
+  renderFocusHint();
 
   const weakItems = QUESTIONS.map(q => {
     const p = progress[q.id];
@@ -4017,11 +4114,15 @@ function showScreen(name) {
   const tabMap = {home:'tab-home',results:'tab-home',quiz:'tab-home',progress:'tab-progress'};
   if (tabMap[name]) document.getElementById(tabMap[name]).classList.add('active');
   if (name==='progress') renderProgress();
+  if (name==='home') renderFocusHint();
   window.scrollTo(0,0);
 }
 function confirmReset() { document.getElementById('reset-modal').classList.add('show'); }
 function closeModal()    { document.getElementById('reset-modal').classList.remove('show'); }
 function resetAll()      { localStorage.removeItem(STORAGE_KEY); progress=loadProgress(); closeModal(); renderProgress(); }
+
+// render focus hint on first load
+renderFocusHint();
 
 // countdown
 (function(){
