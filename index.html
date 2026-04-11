@@ -214,22 +214,22 @@
           <button class="section-btn selected" data-section="gm" onclick="toggleSection(this)">
             <div class="sb-dot" style="background:var(--navy)"></div>
             <span class="sb-label">General Manual</span>
-            <span class="sb-count">120 questions</span>
+            <span class="sb-count" id="count-gm"></span>
           </button>
           <button class="section-btn selected" data-section="pc" onclick="toggleSection(this)">
             <div class="sb-dot" style="background:var(--green)"></div>
             <span class="sb-label">Penal Code</span>
-            <span class="sb-count">40 questions</span>
+            <span class="sb-count" id="count-pc"></span>
           </button>
           <button class="section-btn selected" data-section="tb" onclick="toggleSection(this)">
             <div class="sb-dot" style="background:var(--brown)"></div>
             <span class="sb-label">Textbook</span>
-            <span class="sb-count">50 questions</span>
+            <span class="sb-count" id="count-tb"></span>
           </button>
           <button class="section-btn selected" data-section="cba" onclick="toggleSection(this)">
             <div class="sb-dot" style="background:var(--cba)"></div>
             <span class="sb-label">CBA</span>
-            <span class="sb-count">35 questions</span>
+            <span class="sb-count" id="count-cba"></span>
           </button>
         </div>
 
@@ -4608,6 +4608,12 @@ function saveProgress(p) { try { localStorage.setItem(STORAGE_KEY, JSON.stringif
 
 let progress = loadProgress();
 QUESTIONS.forEach(q => { if (!progress[q.id]) progress[q.id] = {correct:0, attempts:0, weight:3}; });
+
+// Auto-populate section question counts from actual data
+['gm','pc','tb','cba'].forEach(sec => {
+  const el = document.getElementById('count-' + sec);
+  if (el) el.textContent = QUESTIONS.filter(q => q.sec === sec).length + ' questions';
+});
 
 let session = { queue:[], current:0, score:0, total:0, answered:false, sessionLen:20, sections:new Set(['gm','pc','tb','cba']), history:[] };
 
