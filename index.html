@@ -4700,9 +4700,12 @@ function renderQuestion() {
   document.getElementById('q-text').textContent = q.q;
 
   const letters = ['A','B','C','D'];
-  document.getElementById('choices-wrap').innerHTML = q.choices.map((c,i) =>
-    `<button class="choice-btn" onclick="selectAnswer(${i})" id="ch-${i}">
-      <span class="choice-letter">${letters[i]}</span><span>${c.replace(/^[A-D]\.\s*/i,'')}</span>
+  // Shuffle display order fresh every render so correct answer moves each time
+  const displayOrder = [0,1,2,3].sort(() => Math.random() - 0.5);
+  session.displayOrder = displayOrder;
+  document.getElementById('choices-wrap').innerHTML = displayOrder.map((dataIdx, displayPos) =>
+    `<button class="choice-btn" onclick="selectAnswer(${displayPos})" id="ch-${displayPos}">
+      <span class="choice-letter">${letters[displayPos]}</span><span>${q.choices[dataIdx].replace(/^[A-D]\.\s*/i,'')}</span>
     </button>`
   ).join('');
 
@@ -4712,21 +4715,24 @@ function renderQuestion() {
   session.answered = false;
 }
 
-function selectAnswer(chosen) {
+function selectAnswer(chosenDisplayPos) {
   if (session.answered) return;
   session.answered = true;
   const q = QUESTIONS.find(x => x.id === session.queue[session.current]);
-  const correct = chosen === q.ans;
+  // Map display position → data index using the stored shuffle
+  const chosenDataIdx = session.displayOrder[chosenDisplayPos];
+  const correct = chosenDataIdx === q.ans;
+  const correctDisplayPos = session.displayOrder.indexOf(q.ans);
   const p = progress[q.id];
   p.attempts++;
   if (correct) { p.correct++; p.weight = Math.max(1, p.weight - 1); }
   else { p.weight = Math.min(5, p.weight + 2); }
   saveProgress(progress);
 
-  document.querySelectorAll('.choice-btn').forEach((btn, i) => {
+  document.querySelectorAll('.choice-btn').forEach((btn, displayPos) => {
     btn.disabled = true;
-    if (i === q.ans) btn.classList.add(correct && i===chosen ? 'correct' : 'reveal');
-    if (!correct && i === chosen) btn.classList.add('wrong');
+    if (displayPos === correctDisplayPos) btn.classList.add(correct && displayPos===chosenDisplayPos ? 'correct' : 'reveal');
+    if (!correct && displayPos === chosenDisplayPos) btn.classList.add('wrong');
   });
 
   const fb = document.getElementById('feedback');
@@ -4735,7 +4741,7 @@ function selectAnswer(chosen) {
   const correctText = q.choices[q.ans].replace(/^[A-D]\.\s*/i, '');
   document.getElementById('feedback-body').textContent = correct
     ? 'Nice — keep the streak going!'
-    : `Correct answer: ${['A','B','C','D'][q.ans]} — ${correctText}`;
+    : `Correct answer: ${['A','B','C','D'][correctDisplayPos]} — ${correctText}`;
   document.getElementById('ref-src-text').textContent = q.src;
   const citeEl = document.getElementById('ref-cite-text');
   if (q.cite && q.cite.trim()) {
