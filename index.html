@@ -208,6 +208,7 @@
         <div class="date-badge" id="date-badge">📅 17 days until exam — April 23, 2026 @ 0900</div>
         <h2>Ready to quiz?</h2>
         <p>Wrong answers come back more often. The app tracks everything and keeps drilling your weak spots until they're locked in.</p>
+        <div id="pep-talk" style="background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:10px 13px;margin-bottom:4px;font-size:12.5px;color:var(--text2);line-height:1.5"></div>
 
         <div class="section-label">Filter by section</div>
         <div class="section-grid" id="section-filter">
@@ -736,6 +737,47 @@ function resetAll()      { localStorage.removeItem(STORAGE_KEY); progress=loadPr
 
 // render focus hint on first load
 renderFocusHint();
+
+// ── PEP TALKS ─────────────────────────────────────────────────────────────
+const pepTalks = [
+  "💪 Sgt Jomamma and Sgt YoDaddy believe in you. Probably.",
+  "🧠 Fun fact: 'Muddling Through / Disjointed Incrementalism' is a real thing you now have to know. You're welcome.",
+  "☕ You can't buy coffee on a call, but you CAN study before one.",
+  "📋 Span of Control: the ability to keep your sanity while studying 302 questions. You got this.",
+  "🎯 Every wrong answer today = one less wrong answer on April 23rd. It's basically math.",
+  "🚔 The textbook is decentralized. Your knowledge will not be.",
+  "😤 Blake and Mouton's grid says a high-task, low-people score is 'Authoritarian.' Don't be authoritarian about skipping study sessions.",
+  "🏆 Reminder: Sgt is not just a title — it's two letters between you and your future paycheck.",
+  "📖 PRO TIP: 'Evidence-Based Policing' is for hiring, training, and policy development. Write that on your hand. Actually don't do that.",
+  "🤓 You've studied Inactive Planning ('business as usual'). This study session is your Proactive Planning arc.",
+  "🔥 Intelligence-Led Policing is a business model, not a tactic. Just like studying is a lifestyle, not a hobby.",
+  "😅 If this feels like Muddling Through, congrats — you just experienced Lindblom's Disjointed Incrementalism firsthand.",
+  "🎲 Answer choices are randomized so Phil can't just muscle-memory his way through. That's love.",
+  "🌟 The exam is at 0900. You've responded to worse at 0300. You've got this.",
+  "🥇 Bounded Rationality says 'good enough' is fine. This exam does not agree. Shoot for optimal.",
+  "💼 Synoptic Planning Step 1: Preparation. You're doing it right now. Gold star.",
+  "🧩 Remember: Out-Group members get ACCURATE performance appraisals. Be In-Group worthy.",
+  "📊 SITAR: Synoptic. Incremental. Transactive. Advocacy. Radical. Say it five times fast. Then get it right on the exam.",
+  "🎯 The single most potent stressor in LE is killing someone in the line of duty. Failing this exam is NOT on that list. Perspective.",
+  "😂 Sgt YoDaddy only cares about your call numbers. Be better than Sgt YoDaddy.",
+  "🚀 6 days to exam? That's fine. RPD says experienced decision-makers act without complete analysis anyway.",
+  "🧠 Type A, B, C, D, and Workaholic. Only one of these is studying at this hour. You know which one.",
+  "💡 Community policing is about crime REDUCTION, not crime PREVENTION. The exam will try to trick you. We already know.",
+  "🫡 POST Commission mandates do NOT include 'providing' training — just 'articulating' requirements. Don't let them gaslight you.",
+];
+function renderPepTalk() {
+  const el = document.getElementById('pep-talk');
+  if (!el) return;
+  const pick = pepTalks[Math.floor(Math.random() * pepTalks.length)];
+  el.textContent = pick;
+}
+renderPepTalk();
+// also refresh when returning to home
+const _origShowScreen = showScreen;
+function showScreen(name) {
+  _origShowScreen(name);
+  if (name === 'home') renderPepTalk();
+}
 
 // countdown
 (function(){
