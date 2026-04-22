@@ -728,7 +728,7 @@ function showScreen(name) {
   const tabMap = {home:'tab-home',results:'tab-home',quiz:'tab-home',progress:'tab-progress'};
   if (tabMap[name]) document.getElementById(tabMap[name]).classList.add('active');
   if (name==='progress') renderProgress();
-  if (name==='home') renderFocusHint();
+  if (name==='home') { renderFocusHint(); renderPepTalk(); }
   window.scrollTo(0,0);
 }
 function confirmReset() { document.getElementById('reset-modal').classList.add('show'); }
@@ -769,12 +769,6 @@ function renderPepTalk() {
   el.textContent = pick;
 }
 renderPepTalk();
-// also refresh when returning to home
-const _origShowScreen = showScreen;
-function showScreen(name) {
-  _origShowScreen(name);
-  if (name === 'home') renderPepTalk();
-}
 
 // countdown
 (function(){
